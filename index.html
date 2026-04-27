@@ -8,872 +8,303 @@
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;600;700&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
 <style>
   :root {
-    --bg: #040810;
-    --bg2: #080f1a;
-    --bg3: #0d1825;
-    --card: #0a1220;
-    --teal: #00c9a7;
-    --teal2: #00e5c0;
-    --neon: #00ff88;
-    --gold: #f4b942;
-    --red: #ff4e6a;
-    --text: #d4e0f0;
-    --muted: #5a7a9a;
-    --border: rgba(0,201,167,0.15);
-    --glow: rgba(0,201,167,0.3);
-    --font-head: 'Chakra Petch', sans-serif;
-    --font-body: 'Outfit', sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
+    --bg:#040810;--bg2:#080f1a;--bg3:#0d1825;--card:#0a1220;
+    --teal:#00c9a7;--neon:#00ff88;--gold:#f4b942;--red:#ff4e6a;
+    --text:#d4e0f0;--muted:#5a7a9a;
+    --border:rgba(0,201,167,0.15);--glow:rgba(0,201,167,0.3);
+    --font-head:'Chakra Petch',sans-serif;
+    --font-body:'Outfit',sans-serif;
+    --font-mono:'JetBrains Mono',monospace;
   }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.6;overflow-x:hidden;cursor:none}
+  ::-webkit-scrollbar{width:4px}
+  ::-webkit-scrollbar-track{background:var(--bg)}
+  ::-webkit-scrollbar-thumb{background:var(--teal);border-radius:2px}
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-body);
-    font-size: 16px;
-    line-height: 1.6;
-    overflow-x: hidden;
-    cursor: none;
-  }
-
-  /* CUSTOM CURSOR */
-  .cursor {
-    position: fixed; z-index: 99999;
-    width: 12px; height: 12px;
-    background: var(--teal);
-    border-radius: 50%;
-    pointer-events: none;
-    transition: transform 0.15s ease, opacity 0.3s;
-    mix-blend-mode: screen;
-  }
-  .cursor-ring {
-    position: fixed; z-index: 99998;
-    width: 36px; height: 36px;
-    border: 1px solid var(--teal);
-    border-radius: 50%;
-    pointer-events: none;
-    transition: transform 0.4s cubic-bezier(0.23,1,0.32,1), opacity 0.3s;
-    opacity: 0.5;
-  }
-
-  /* SCROLLBAR */
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--teal); border-radius: 2px; }
-
-  /* CANVAS BG */
-  #hero-canvas {
-    position: absolute; top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: 0;
-  }
+  /* CURSOR */
+  .cursor{position:fixed;z-index:99999;width:12px;height:12px;background:var(--teal);border-radius:50%;pointer-events:none;transition:transform .15s ease;mix-blend-mode:screen;top:0;left:0}
+  .cursor-ring{position:fixed;z-index:99998;width:36px;height:36px;border:1px solid var(--teal);border-radius:50%;pointer-events:none;opacity:.5;top:0;left:0}
 
   /* NAV */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0;
-    z-index: 1000;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 20px 60px;
-    background: rgba(4,8,16,0.7);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-    transition: padding 0.3s ease;
-  }
-  nav.scrolled { padding: 14px 60px; }
-  .nav-logo {
-    font-family: var(--font-head);
-    font-size: 22px;
-    font-weight: 700;
-    color: #fff;
-    letter-spacing: 2px;
-    text-decoration: none;
-  }
-  .nav-logo span { color: var(--teal); }
-  .nav-links { display: flex; gap: 36px; list-style: none; }
-  .nav-links a {
-    color: var(--muted);
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    transition: color 0.3s;
-    position: relative;
-  }
-  .nav-links a::after {
-    content: '';
-    position: absolute; bottom: -4px; left: 0;
-    width: 0; height: 1px;
-    background: var(--teal);
-    transition: width 0.3s ease;
-  }
-  .nav-links a:hover { color: var(--teal); }
-  .nav-links a:hover::after { width: 100%; }
-  .nav-cta {
-    background: var(--teal);
-    color: #000;
-    padding: 10px 24px;
-    border-radius: 4px;
-    font-family: var(--font-head);
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 1px;
-    text-decoration: none;
-    text-transform: uppercase;
-    transition: all 0.3s;
-    box-shadow: 0 0 20px var(--glow);
-  }
-  .nav-cta:hover {
-    background: var(--neon);
-    box-shadow: 0 0 40px rgba(0,255,136,0.5);
-    transform: translateY(-1px);
-  }
-  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
-  .hamburger span { display: block; width: 24px; height: 2px; background: var(--teal); transition: all 0.3s; }
-
-  /* HERO */
-  #hero {
-    position: relative;
-    min-height: 100vh;
-    display: flex; align-items: center;
-    overflow: hidden;
-    padding: 120px 60px 80px;
-  }
-  .hero-content {
-    position: relative; z-index: 2;
-    max-width: 700px;
-  }
-  .hero-badge {
-    display: inline-flex; align-items: center; gap: 8px;
-    border: 1px solid var(--border);
-    padding: 6px 16px; border-radius: 100px;
-    font-size: 12px; font-family: var(--font-mono);
-    color: var(--teal); margin-bottom: 32px;
-    background: rgba(0,201,167,0.05);
-    animation: fadeUp 0.8s ease both;
-  }
-  .badge-dot {
-    width: 6px; height: 6px;
-    background: var(--neon);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.4; transform: scale(0.8); }
-  }
-  .hero-title {
-    font-family: var(--font-head);
-    font-size: clamp(44px, 7vw, 82px);
-    font-weight: 700;
-    line-height: 1.05;
-    color: #fff;
-    margin-bottom: 24px;
-    animation: fadeUp 0.8s 0.1s ease both;
-  }
-  .hero-title .accent { color: var(--teal); }
-  .hero-title .glow-text {
-    text-shadow: 0 0 40px rgba(0,201,167,0.6);
-  }
-  .hero-sub {
-    font-size: 18px; color: var(--muted);
-    max-width: 520px; margin-bottom: 48px;
-    line-height: 1.7;
-    animation: fadeUp 0.8s 0.2s ease both;
-  }
-  .hero-btns {
-    display: flex; gap: 16px; flex-wrap: wrap;
-    animation: fadeUp 0.8s 0.3s ease both;
-  }
-  .btn-primary {
-    display: inline-flex; align-items: center; gap: 10px;
-    background: var(--teal);
-    color: #000;
-    padding: 16px 32px;
-    border-radius: 6px;
-    font-family: var(--font-head);
-    font-weight: 700;
-    font-size: 14px;
-    letter-spacing: 1.5px;
-    text-decoration: none;
-    text-transform: uppercase;
-    transition: all 0.3s;
-    box-shadow: 0 0 30px var(--glow);
-    cursor: none;
-  }
-  .btn-primary:hover {
-    background: var(--neon);
-    box-shadow: 0 0 60px rgba(0,255,136,0.6);
-    transform: translateY(-2px);
-  }
-  .btn-secondary {
-    display: inline-flex; align-items: center; gap: 10px;
-    background: transparent;
-    color: var(--text);
-    padding: 16px 32px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    font-family: var(--font-head);
-    font-weight: 600;
-    font-size: 14px;
-    letter-spacing: 1.5px;
-    text-decoration: none;
-    text-transform: uppercase;
-    transition: all 0.3s;
-    cursor: none;
-  }
-  .btn-secondary:hover {
-    border-color: var(--teal);
-    color: var(--teal);
-    box-shadow: 0 0 20px var(--glow);
-    transform: translateY(-2px);
-  }
-  .hero-stats {
-    position: relative; z-index: 2;
-    margin-left: auto;
-    display: flex; flex-direction: column; gap: 20px;
-    animation: fadeLeft 0.8s 0.4s ease both;
-  }
-  .stat-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px 32px;
-    min-width: 200px;
-    position: relative; overflow: hidden;
-    transition: transform 0.3s, box-shadow 0.3s;
-  }
-  .stat-card::before {
-    content: '';
-    position: absolute; top: 0; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--teal), transparent);
-  }
-  .stat-card:hover { transform: translateX(-4px); box-shadow: 0 0 30px var(--glow); }
-  .stat-val {
-    font-family: var(--font-mono);
-    font-size: 32px; font-weight: 600;
-    color: var(--teal);
-  }
-  .stat-label { font-size: 13px; color: var(--muted); margin-top: 4px; }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeLeft {
-    from { opacity: 0; transform: translateX(30px); }
-    to { opacity: 1; transform: translateX(0); }
-  }
-
-  /* TICKER */
-  .ticker-wrap {
-    background: var(--bg2);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    overflow: hidden;
-    padding: 14px 0;
-  }
-  .ticker {
-    display: flex; gap: 60px;
-    animation: ticker 30s linear infinite;
-    white-space: nowrap;
-  }
-  .ticker-item {
-    display: inline-flex; align-items: center; gap: 10px;
-    font-family: var(--font-mono);
-    font-size: 13px; color: var(--muted);
-    flex-shrink: 0;
-  }
-  .ticker-item .t-name { color: var(--text); font-weight: 600; }
-  .ticker-item .t-up { color: var(--neon); }
-  .ticker-item .t-down { color: var(--red); }
-  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-
-  /* SECTIONS */
-  section { padding: 100px 60px; }
-  .section-badge {
-    display: inline-flex; align-items: center; gap: 8px;
-    border: 1px solid var(--border);
-    padding: 6px 16px; border-radius: 100px;
-    font-size: 11px; font-family: var(--font-mono);
-    color: var(--teal); margin-bottom: 20px;
-    background: rgba(0,201,167,0.05);
-    letter-spacing: 2px; text-transform: uppercase;
-  }
-  .section-title {
-    font-family: var(--font-head);
-    font-size: clamp(32px, 5vw, 56px);
-    font-weight: 700; color: #fff;
-    line-height: 1.1; margin-bottom: 16px;
-  }
-  .section-sub {
-    font-size: 17px; color: var(--muted);
-    max-width: 560px; line-height: 1.7;
-  }
-  .section-header { margin-bottom: 60px; }
-  .text-center { text-align: center; }
-  .text-center .section-sub { margin: 0 auto; }
-
-  /* LIVE RATES */
-  #rates { background: var(--bg2); }
-  .rates-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px; margin-bottom: 40px;
-  }
-  .rate-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 32px;
-    position: relative; overflow: hidden;
-    transition: all 0.4s ease;
-  }
-  .rate-card::after {
-    content: '';
-    position: absolute; inset: 0;
-    background: radial-gradient(circle at top right, rgba(0,201,167,0.08), transparent 60%);
-    pointer-events: none;
-  }
-  .rate-card:hover {
-    border-color: var(--teal);
-    transform: translateY(-4px);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 30px var(--glow);
-  }
-  .rate-card .rc-label {
-    font-size: 11px; letter-spacing: 3px;
-    color: var(--muted); font-family: var(--font-mono);
-    text-transform: uppercase; margin-bottom: 12px;
-  }
-  .rate-card .rc-pair {
-    font-family: var(--font-head);
-    font-size: 20px; font-weight: 700;
-    color: #fff; margin-bottom: 24px;
-  }
-  .rate-card .rc-val {
-    font-family: var(--font-mono);
-    font-size: 40px; font-weight: 600;
-    color: var(--teal);
-    line-height: 1;
-  }
-  .rate-card .rc-unit { font-size: 16px; color: var(--muted); }
-  .rate-card .rc-badge {
-    position: absolute; top: 20px; right: 20px;
-    padding: 4px 12px; border-radius: 100px;
-    font-size: 11px; font-family: var(--font-mono);
-    font-weight: 600; letter-spacing: 1px;
-  }
-  .rc-badge.buy { background: rgba(0,255,136,0.1); color: var(--neon); border: 1px solid rgba(0,255,136,0.3); }
-  .rc-badge.sell { background: rgba(255,78,106,0.1); color: var(--red); border: 1px solid rgba(255,78,106,0.3); }
-  .rc-badge.bulk { background: rgba(244,185,66,0.1); color: var(--gold); border: 1px solid rgba(244,185,66,0.3); }
-  .rate-note {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px 28px;
-    display: flex; align-items: center; gap: 16px;
-    font-size: 14px; color: var(--muted);
-  }
-  .rate-note svg { flex-shrink: 0; }
-  .rate-note strong { color: var(--gold); }
-
-  /* HOW IT WORKS */
-  .steps-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 0;
-    position: relative;
-  }
-  .steps-row::before {
-    content: '';
-    position: absolute;
-    top: 44px; left: 10%; right: 10%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--teal), transparent);
-    z-index: 0;
-  }
-  .step {
-    display: flex; flex-direction: column; align-items: center;
-    text-align: center; padding: 0 20px;
-    position: relative; z-index: 1;
-    opacity: 0; transform: translateY(20px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-  }
-  .step.visible { opacity: 1; transform: translateY(0); }
-  .step-num {
-    width: 88px; height: 88px;
-    border-radius: 50%;
-    background: var(--card);
-    border: 2px solid var(--teal);
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-head);
-    font-size: 28px; font-weight: 700;
-    color: var(--teal);
-    margin-bottom: 24px;
-    box-shadow: 0 0 30px var(--glow);
-    position: relative;
-    transition: all 0.3s;
-  }
-  .step:hover .step-num {
-    background: var(--teal);
-    color: #000;
-    box-shadow: 0 0 60px rgba(0,201,167,0.6);
-    transform: scale(1.1);
-  }
-  .step-title {
-    font-family: var(--font-head);
-    font-size: 18px; font-weight: 600;
-    color: #fff; margin-bottom: 12px;
-  }
-  .step-desc { font-size: 14px; color: var(--muted); line-height: 1.7; }
-
-  /* SERVICES */
-  #services { background: var(--bg2); }
-  .services-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 24px;
-  }
-  .service-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 36px 32px;
-    transition: all 0.4s;
-    position: relative; overflow: hidden;
-    opacity: 0; transform: translateY(20px);
-    transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.4s, box-shadow 0.4s;
-  }
-  .service-card.visible { opacity: 1; transform: translateY(0); }
-  .service-card::before {
-    content: '';
-    position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, transparent, var(--teal), transparent);
-    transform: scaleX(0);
-    transition: transform 0.4s ease;
-  }
-  .service-card:hover::before { transform: scaleX(1); }
-  .service-card:hover { border-color: rgba(0,201,167,0.4); box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
-  .svc-icon {
-    width: 56px; height: 56px;
-    background: rgba(0,201,167,0.1);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 24px;
-    font-size: 24px;
-    transition: all 0.3s;
-  }
-  .service-card:hover .svc-icon {
-    background: var(--teal);
-    border-color: var(--teal);
-  }
-  .svc-title {
-    font-family: var(--font-head);
-    font-size: 20px; font-weight: 700;
-    color: #fff; margin-bottom: 12px;
-  }
-  .svc-desc { font-size: 14px; color: var(--muted); line-height: 1.7; }
-
-  /* FLASH SERVICES */
-  .flash-section {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 48px;
-    margin-top: 40px;
-    position: relative; overflow: hidden;
-  }
-  .flash-section::before {
-    content: '⚡ FLASH';
-    position: absolute; top: -20px; right: 40px;
-    font-family: var(--font-head);
-    font-size: 80px; font-weight: 700;
-    color: rgba(244,185,66,0.04);
-    letter-spacing: 8px;
-  }
-  .flash-title {
-    font-family: var(--font-head);
-    font-size: 24px; font-weight: 700;
-    color: var(--gold); margin-bottom: 8px;
-    display: flex; align-items: center; gap: 12px;
-  }
-  .flash-sub { font-size: 14px; color: var(--muted); margin-bottom: 32px; }
-  .flash-price-row {
-    display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 32px;
-  }
-  .flash-price-chip {
-    background: rgba(244,185,66,0.1);
-    border: 1px solid rgba(244,185,66,0.3);
-    border-radius: 8px;
-    padding: 12px 20px;
-    font-family: var(--font-mono);
-    font-size: 14px;
-  }
-  .flash-price-chip .fpc-val { color: var(--gold); font-size: 22px; font-weight: 600; }
-  .flash-price-chip .fpc-label { color: var(--muted); font-size: 11px; }
-  .flash-wallets {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 16px;
-  }
-  .wallet-item {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px 18px;
-    transition: all 0.3s;
-  }
-  .wallet-item:hover { border-color: var(--gold); box-shadow: 0 0 20px rgba(244,185,66,0.15); }
-  .wallet-name { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 6px; }
-  .wallet-tokens { font-size: 11px; color: var(--muted); font-family: var(--font-mono); line-height: 1.6; }
-
-  /* WHY CHOOSE US */
-  .why-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 24px;
-  }
-  .why-card {
-    padding: 32px;
-    border-radius: 16px;
-    border: 1px solid var(--border);
-    background: var(--card);
-    position: relative;
-    transition: all 0.4s;
-    opacity: 0; transform: scale(0.95);
-  }
-  .why-card.visible { opacity: 1; transform: scale(1); }
-  .why-card:hover { border-color: var(--teal); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
-  .why-icon { font-size: 36px; margin-bottom: 20px; }
-  .why-title {
-    font-family: var(--font-head); font-size: 19px; font-weight: 700;
-    color: #fff; margin-bottom: 12px;
-  }
-  .why-desc { font-size: 14px; color: var(--muted); line-height: 1.7; }
-  .why-num {
-    position: absolute; top: 20px; right: 24px;
-    font-family: var(--font-mono);
-    font-size: 48px; font-weight: 700;
-    color: rgba(0,201,167,0.06);
-  }
-
-  /* TESTIMONIALS */
-  #testimonials { background: var(--bg2); }
-  .testimonials-container { position: relative; overflow: hidden; }
-  .testimonials-track {
-    display: flex; gap: 24px;
-    transition: transform 0.6s cubic-bezier(0.23,1,0.32,1);
-  }
-  .testi-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 36px;
-    min-width: 380px;
-    max-width: 380px;
-    flex-shrink: 0;
-    position: relative; overflow: hidden;
-    transition: all 0.4s;
-  }
-  .testi-card:hover { border-color: var(--teal); box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
-  .testi-card .quote-icon {
-    font-size: 60px;
-    color: rgba(0,201,167,0.1);
-    font-family: Georgia, serif;
-    line-height: 1; margin-bottom: 16px;
-    display: block;
-  }
-  .testi-text { font-size: 15px; color: var(--text); line-height: 1.8; margin-bottom: 28px; }
-  .testi-author { display: flex; align-items: center; gap: 14px; }
-  .testi-avatar {
-    width: 48px; height: 48px;
-    border-radius: 50%;
-    background: var(--bg3);
-    border: 2px solid var(--teal);
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-head); font-size: 18px; font-weight: 700;
-    color: var(--teal);
-  }
-  .testi-name { font-family: var(--font-head); font-size: 16px; font-weight: 600; color: #fff; }
-  .testi-role { font-size: 12px; color: var(--muted); }
-  .testi-stars { display: flex; gap: 3px; color: var(--gold); font-size: 14px; margin-top: 4px; }
-  .testi-controls {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-top: 40px;
-  }
-  .testi-dots { display: flex; gap: 8px; }
-  .t-dot {
-    width: 8px; height: 8px; border-radius: 100px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    cursor: none; transition: all 0.3s;
-  }
-  .t-dot.active { background: var(--teal); width: 24px; box-shadow: 0 0 10px var(--glow); }
-  .testi-arrows { display: flex; gap: 12px; }
-  .t-arrow {
-    width: 48px; height: 48px;
-    border: 1px solid var(--border);
-    border-radius: 50%;
-    background: var(--card);
-    display: flex; align-items: center; justify-content: center;
-    cursor: none; transition: all 0.3s;
-    color: var(--muted);
-  }
-  .t-arrow:hover { border-color: var(--teal); color: var(--teal); background: rgba(0,201,167,0.1); }
-
-  /* FAQ */
-  .faq-list { max-width: 800px; margin: 0 auto; }
-  .faq-item {
-    border-bottom: 1px solid var(--border);
-    overflow: hidden;
-  }
-  .faq-q {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 24px 0;
-    cursor: none;
-    font-family: var(--font-head);
-    font-size: 17px; font-weight: 600;
-    color: var(--text);
-    transition: color 0.3s;
-    gap: 20px;
-  }
-  .faq-q:hover { color: var(--teal); }
-  .faq-icon {
-    width: 32px; height: 32px; flex-shrink: 0;
-    border: 1px solid var(--border);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; color: var(--teal);
-    transition: all 0.3s;
-  }
-  .faq-item.open .faq-icon { transform: rotate(45deg); background: var(--teal); color: #000; border-color: var(--teal); }
-  .faq-a {
-    max-height: 0; overflow: hidden;
-    transition: max-height 0.4s ease, padding 0.3s;
-    font-size: 15px; color: var(--muted); line-height: 1.8;
-  }
-  .faq-item.open .faq-a { max-height: 200px; padding-bottom: 24px; }
-
-  /* CONTACT */
-  #contact {
-    background: var(--bg2);
-    position: relative; overflow: hidden;
-  }
-  #contact::before {
-    content: '';
-    position: absolute;
-    top: -200px; left: 50%; transform: translateX(-50%);
-    width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(0,201,167,0.06) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .contact-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 60px; align-items: start;
-  }
-  .contact-info h3 {
-    font-family: var(--font-head);
-    font-size: 32px; font-weight: 700;
-    color: #fff; margin-bottom: 16px;
-  }
-  .contact-info p { font-size: 16px; color: var(--muted); margin-bottom: 40px; line-height: 1.7; }
-  .contact-channels { display: flex; flex-direction: column; gap: 16px; }
-  .channel-link {
-    display: flex; align-items: center; gap: 16px;
-    padding: 18px 24px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    text-decoration: none;
-    color: var(--text);
-    transition: all 0.3s;
-    cursor: none;
-  }
-  .channel-link:hover { border-color: var(--teal); color: var(--teal); box-shadow: 0 0 20px var(--glow); transform: translateX(4px); }
-  .channel-icon {
-    width: 44px; height: 44px;
-    background: rgba(0,201,167,0.1);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px; flex-shrink: 0;
-  }
-  .channel-label { font-family: var(--font-head); font-size: 16px; font-weight: 600; }
-  .channel-handle { font-size: 13px; color: var(--muted); font-family: var(--font-mono); }
-
-  .contact-form { display: flex; flex-direction: column; gap: 20px; }
-  .form-group { display: flex; flex-direction: column; gap: 8px; }
-  .form-label { font-size: 13px; color: var(--muted); letter-spacing: 1px; font-family: var(--font-mono); }
-  .form-input, .form-select, .form-textarea {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 14px 18px;
-    color: var(--text);
-    font-family: var(--font-body);
-    font-size: 15px;
-    transition: border-color 0.3s, box-shadow 0.3s;
-    width: 100%;
-    outline: none;
-  }
-  .form-input:focus, .form-select:focus, .form-textarea:focus {
-    border-color: var(--teal);
-    box-shadow: 0 0 0 3px rgba(0,201,167,0.1);
-  }
-  .form-select option { background: var(--bg2); }
-  .form-textarea { resize: vertical; min-height: 120px; }
-  .form-submit {
-    background: var(--teal);
-    color: #000;
-    border: none;
-    padding: 16px 32px;
-    border-radius: 8px;
-    font-family: var(--font-head);
-    font-size: 14px; font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    cursor: none;
-    transition: all 0.3s;
-    box-shadow: 0 0 20px var(--glow);
-  }
-  .form-submit:hover { background: var(--neon); box-shadow: 0 0 40px rgba(0,255,136,0.5); transform: translateY(-2px); }
-
-  /* FOOTER */
-  footer {
-    background: var(--bg);
-    border-top: 1px solid var(--border);
-    padding: 60px 60px 40px;
-  }
-  .footer-top {
-    display: flex; align-items: flex-start; justify-content: space-between;
-    flex-wrap: wrap; gap: 40px;
-    margin-bottom: 48px;
-  }
-  .footer-brand .nav-logo { font-size: 26px; display: block; margin-bottom: 14px; }
-  .footer-brand p { font-size: 14px; color: var(--muted); max-width: 280px; line-height: 1.7; }
-  .footer-links h4 {
-    font-family: var(--font-head); font-size: 13px;
-    letter-spacing: 2px; color: var(--muted);
-    text-transform: uppercase; margin-bottom: 20px;
-  }
-  .footer-links ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
-  .footer-links a {
-    color: var(--muted); text-decoration: none;
-    font-size: 14px; transition: color 0.3s;
-  }
-  .footer-links a:hover { color: var(--teal); }
-  .footer-bottom {
-    display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: 16px;
-    padding-top: 32px;
-    border-top: 1px solid var(--border);
-    font-size: 13px; color: var(--muted);
-  }
-  .footer-bottom .teal { color: var(--teal); }
-
-  /* ABOUT */
-  .about-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px; align-items: center;
-  }
-  .about-visual {
-    position: relative; border-radius: 24px; overflow: hidden;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    padding: 48px;
-    display: flex; align-items: center; justify-content: center;
-    min-height: 400px;
-  }
-  .about-canvas-wrap { position: relative; z-index: 1; text-align: center; }
-  .about-big-num {
-    font-family: var(--font-head);
-    font-size: 80px; font-weight: 700;
-    color: var(--teal);
-    line-height: 1;
-    text-shadow: 0 0 60px rgba(0,201,167,0.4);
-  }
-  .about-big-label { font-size: 15px; color: var(--muted); margin-top: 8px; }
-  .about-values { display: flex; flex-direction: column; gap: 24px; margin-top: 40px; }
-  .about-val {
-    display: flex; gap: 20px; align-items: flex-start;
-    padding: 20px; border-radius: 12px;
-    background: var(--card); border: 1px solid var(--border);
-    transition: all 0.3s;
-  }
-  .about-val:hover { border-color: var(--teal); box-shadow: 0 0 20px var(--glow); }
-  .av-dot {
-    width: 12px; height: 12px; border-radius: 50%;
-    background: var(--teal); flex-shrink: 0;
-    margin-top: 5px; box-shadow: 0 0 10px var(--glow);
-  }
-  .av-title { font-family: var(--font-head); font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 6px; }
-  .av-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:20px 60px;background:rgba(4,8,16,.7);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);transition:padding .3s}
+  nav.scrolled{padding:14px 60px}
+  .nav-logo{font-family:var(--font-head);font-size:22px;font-weight:700;color:#fff;letter-spacing:2px;text-decoration:none}
+  .nav-logo span{color:var(--teal)}
+  .nav-links{display:flex;gap:36px;list-style:none}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;transition:color .3s;position:relative}
+  .nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--teal);transition:width .3s}
+  .nav-links a:hover{color:var(--teal)}
+  .nav-links a:hover::after{width:100%}
+  .nav-cta{background:var(--teal);color:#000;padding:10px 24px;border-radius:4px;font-family:var(--font-head);font-weight:700;font-size:13px;letter-spacing:1px;text-decoration:none;text-transform:uppercase;transition:all .3s;box-shadow:0 0 20px var(--glow)}
+  .nav-cta:hover{background:var(--neon);box-shadow:0 0 40px rgba(0,255,136,.5);transform:translateY(-1px)}
+  .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer}
+  .hamburger span{display:block;width:24px;height:2px;background:var(--teal);transition:all .3s}
 
   /* MOBILE NAV */
-  .mobile-nav {
-    display: none;
-    position: fixed; inset: 0; z-index: 900;
-    background: rgba(4,8,16,0.97);
-    backdrop-filter: blur(20px);
-    flex-direction: column; align-items: center; justify-content: center;
-    gap: 40px;
-  }
-  .mobile-nav.open { display: flex; }
-  .mobile-nav a {
-    font-family: var(--font-head);
-    font-size: 32px; font-weight: 700;
-    color: var(--muted); text-decoration: none;
-    transition: color 0.3s;
-  }
-  .mobile-nav a:hover { color: var(--teal); }
-  .mobile-close {
-    position: absolute; top: 24px; right: 30px;
-    font-size: 32px; color: var(--muted);
-    cursor: pointer; background: none; border: none;
-    font-family: var(--font-head);
-  }
+  .mobile-nav{display:none;position:fixed;inset:0;z-index:900;background:rgba(4,8,16,.97);backdrop-filter:blur(20px);flex-direction:column;align-items:center;justify-content:center;gap:40px}
+  .mobile-nav.open{display:flex}
+  .mobile-nav a{font-family:var(--font-head);font-size:32px;font-weight:700;color:var(--muted);text-decoration:none;transition:color .3s}
+  .mobile-nav a:hover{color:var(--teal)}
+  .mobile-close{position:absolute;top:24px;right:30px;font-size:32px;color:var(--muted);cursor:pointer;background:none;border:none;font-family:var(--font-head)}
 
-  /* UTILS */
-  .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 0 60px; }
-  .inline-grid { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
-  .tag { font-family: var(--font-mono); font-size: 12px; padding: 6px 14px; border-radius: 100px; background: rgba(0,201,167,0.07); border: 1px solid var(--border); color: var(--muted); }
+  /* HERO */
+  #hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden;padding:120px 60px 80px}
+  #hero-canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0}
+  .hero-content{position:relative;z-index:2;max-width:700px}
+  .hero-badge{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);padding:6px 16px;border-radius:100px;font-size:12px;font-family:var(--font-mono);color:var(--teal);margin-bottom:32px;background:rgba(0,201,167,.05);animation:fadeUp .8s ease both}
+  .badge-dot{width:6px;height:6px;background:var(--neon);border-radius:50%;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+  .hero-title{font-family:var(--font-head);font-size:clamp(44px,7vw,82px);font-weight:700;line-height:1.05;color:#fff;margin-bottom:24px;animation:fadeUp .8s .1s ease both}
+  .hero-title .accent{color:var(--teal)}
+  .hero-title .glow-text{text-shadow:0 0 40px rgba(0,201,167,.6)}
+  .hero-sub{font-size:18px;color:var(--muted);max-width:520px;margin-bottom:48px;line-height:1.7;animation:fadeUp .8s .2s ease both}
+  .hero-btns{display:flex;gap:16px;flex-wrap:wrap;animation:fadeUp .8s .3s ease both}
+  .btn-primary{display:inline-flex;align-items:center;gap:10px;background:var(--teal);color:#000;padding:16px 32px;border-radius:6px;font-family:var(--font-head);font-weight:700;font-size:14px;letter-spacing:1.5px;text-decoration:none;text-transform:uppercase;transition:all .3s;box-shadow:0 0 30px var(--glow)}
+  .btn-primary:hover{background:var(--neon);box-shadow:0 0 60px rgba(0,255,136,.6);transform:translateY(-2px)}
+  .btn-secondary{display:inline-flex;align-items:center;gap:10px;background:transparent;color:var(--text);padding:16px 32px;border-radius:6px;border:1px solid var(--border);font-family:var(--font-head);font-weight:600;font-size:14px;letter-spacing:1.5px;text-decoration:none;text-transform:uppercase;transition:all .3s}
+  .btn-secondary:hover{border-color:var(--teal);color:var(--teal);box-shadow:0 0 20px var(--glow);transform:translateY(-2px)}
+  .hero-stats{position:relative;z-index:2;margin-left:auto;display:flex;flex-direction:column;gap:20px;animation:fadeLeft .8s .4s ease both}
+  .stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px 32px;min-width:200px;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s}
+  .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--teal),transparent)}
+  .stat-card:hover{transform:translateX(-4px);box-shadow:0 0 30px var(--glow)}
+  .stat-val{font-family:var(--font-mono);font-size:32px;font-weight:600;color:var(--teal)}
+  .stat-label{font-size:13px;color:var(--muted);margin-top:4px}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeLeft{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
 
-  /* ANIMATED UNDERLINE on headings */
-  .u-line { position: relative; display: inline-block; }
-  .u-line::after { content: ''; position: absolute; left: 0; bottom: -6px; width: 60px; height: 3px; background: var(--teal); border-radius: 2px; box-shadow: 0 0 12px var(--glow); }
+  /* TICKER */
+  .ticker-wrap{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;padding:14px 0}
+  .ticker{display:flex;gap:60px;animation:ticker 30s linear infinite;white-space:nowrap}
+  .ticker-item{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:13px;color:var(--muted);flex-shrink:0}
+  .ticker-item .t-name{color:var(--text);font-weight:600}
+  .ticker-item .t-up{color:var(--neon)}
+  .ticker-item .t-down{color:var(--red)}
+  @keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
-  @media(max-width:900px) {
-    nav { padding: 18px 24px; }
-    nav.scrolled { padding: 14px 24px; }
-    .nav-links, .nav-cta { display: none; }
-    .hamburger { display: flex; }
-    section { padding: 70px 24px; }
-    #hero { padding: 100px 24px 60px; flex-direction: column; }
-    .hero-stats { margin: 40px 0 0; flex-direction: row; flex-wrap: wrap; }
-    .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 40px; }
-    .steps-row::before { display: none; }
-    footer { padding: 40px 24px 30px; }
-    .footer-top { flex-direction: column; }
-    .footer-bottom { flex-direction: column; text-align: center; }
-    .flash-section { padding: 32px 24px; }
-    .divider { margin: 0 24px; }
+  /* SECTIONS */
+  section{padding:100px 60px}
+  .section-badge{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);padding:6px 16px;border-radius:100px;font-size:11px;font-family:var(--font-mono);color:var(--teal);margin-bottom:20px;background:rgba(0,201,167,.05);letter-spacing:2px;text-transform:uppercase}
+  .section-title{font-family:var(--font-head);font-size:clamp(32px,5vw,56px);font-weight:700;color:#fff;line-height:1.1;margin-bottom:16px}
+  .section-sub{font-size:17px;color:var(--muted);max-width:560px;line-height:1.7}
+  .section-header{margin-bottom:60px}
+  .text-center{text-align:center}
+  .text-center .section-sub{margin:0 auto}
+  .u-line{position:relative;display:inline-block}
+  .u-line::after{content:'';position:absolute;left:0;bottom:-6px;width:60px;height:3px;background:var(--teal);border-radius:2px;box-shadow:0 0 12px var(--glow)}
+  .divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:0 60px}
+
+  /* RATES */
+  #rates{background:var(--bg2)}
+  .rates-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin-bottom:40px}
+  .rate-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;position:relative;overflow:hidden;transition:all .4s}
+  .rate-card:hover{border-color:var(--teal);transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,.4),0 0 30px var(--glow)}
+  .rc-label{font-size:11px;letter-spacing:3px;color:var(--muted);font-family:var(--font-mono);text-transform:uppercase;margin-bottom:12px}
+  .rc-pair{font-family:var(--font-head);font-size:20px;font-weight:700;color:#fff;margin-bottom:24px}
+  .rc-val{font-family:var(--font-mono);font-size:40px;font-weight:600;color:var(--teal);line-height:1}
+  .rc-unit{font-size:16px;color:var(--muted)}
+  .rc-badge{position:absolute;top:20px;right:20px;padding:4px 12px;border-radius:100px;font-size:11px;font-family:var(--font-mono);font-weight:600;letter-spacing:1px;background:rgba(0,255,136,.1);color:var(--neon);border:1px solid rgba(0,255,136,.3)}
+  .rate-note{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:20px 28px;display:flex;align-items:center;gap:16px;font-size:14px;color:var(--muted)}
+  .rate-note strong{color:var(--gold)}
+
+  /* HOW IT WORKS */
+  .steps-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));position:relative}
+  .steps-row::before{content:'';position:absolute;top:44px;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--teal),transparent);z-index:0}
+  .step{display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 20px;position:relative;z-index:1;opacity:0;transform:translateY(20px);transition:opacity .5s,transform .5s}
+  .step.visible{opacity:1;transform:translateY(0)}
+  .step-num{width:88px;height:88px;border-radius:50%;background:var(--card);border:2px solid var(--teal);display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:28px;font-weight:700;color:var(--teal);margin-bottom:24px;box-shadow:0 0 30px var(--glow);transition:all .3s}
+  .step:hover .step-num{background:var(--teal);color:#000;box-shadow:0 0 60px rgba(0,201,167,.6);transform:scale(1.1)}
+  .step-title{font-family:var(--font-head);font-size:18px;font-weight:600;color:#fff;margin-bottom:12px}
+  .step-desc{font-size:14px;color:var(--muted);line-height:1.7}
+
+  /* SERVICES */
+  #services{background:var(--bg2)}
+  .services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}
+  .service-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:36px 32px;position:relative;overflow:hidden;opacity:0;transform:translateY(20px);transition:opacity .5s,transform .5s,border-color .4s,box-shadow .4s}
+  .service-card.visible{opacity:1;transform:translateY(0)}
+  .service-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--teal),transparent);transform:scaleX(0);transition:transform .4s}
+  .service-card:hover::before{transform:scaleX(1)}
+  .service-card:hover{border-color:rgba(0,201,167,.4);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+  .svc-icon{width:56px;height:56px;background:rgba(0,201,167,.1);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:24px;font-size:24px;transition:all .3s}
+  .service-card:hover .svc-icon{background:var(--teal);border-color:var(--teal)}
+  .svc-title{font-family:var(--font-head);font-size:20px;font-weight:700;color:#fff;margin-bottom:12px}
+  .svc-desc{font-size:14px;color:var(--muted);line-height:1.7}
+
+  /* FLASH GEN CARD */
+  .service-card--flash-gen{border-color:rgba(0,255,136,.25)!important;background:linear-gradient(135deg,#0a1220 60%,rgba(0,255,136,.05));cursor:pointer}
+  .service-card--flash-gen::before{background:linear-gradient(90deg,transparent,var(--neon),transparent)!important}
+  .service-card--flash-gen:hover{border-color:var(--neon)!important;box-shadow:0 20px 60px rgba(0,255,136,.15)!important;transform:translateY(-6px)!important}
+  .service-card--flash-gen .svc-icon{background:rgba(0,255,136,.1)!important;border-color:rgba(0,255,136,.3)!important}
+  .service-card--flash-gen:hover .svc-icon{background:var(--neon)!important;border-color:var(--neon)!important}
+  .free-badge-pill{position:absolute;top:18px;right:18px;background:rgba(0,255,136,.12);border:1px solid rgba(0,255,136,.4);color:var(--neon);font-family:var(--font-mono);font-size:11px;font-weight:700;padding:4px 12px;border-radius:100px;letter-spacing:1px;animation:pulseBadge 2s infinite}
+  @keyframes pulseBadge{0%,100%{box-shadow:0 0 0 0 rgba(0,255,136,.3)}50%{box-shadow:0 0 0 8px rgba(0,255,136,0)}}
+  .svc-launch-btn{display:inline-flex;align-items:center;gap:8px;margin-top:20px;background:var(--neon);color:#000;padding:10px 20px;border-radius:6px;font-family:var(--font-head);font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;box-shadow:0 0 20px rgba(0,255,136,.3);transition:all .3s;pointer-events:none}
+  .service-card--flash-gen:hover .svc-launch-btn{box-shadow:0 0 40px rgba(0,255,136,.6);transform:scale(1.04)}
+
+  /* AIRDROPS CARD */
+  .service-card--soon{border-color:rgba(244,185,66,.2)!important;background:linear-gradient(135deg,#0a1220 60%,rgba(244,185,66,.03))}
+  .service-card--soon::before{background:linear-gradient(90deg,transparent,var(--gold),transparent)!important}
+  .service-card--soon:hover{border-color:var(--gold)!important;box-shadow:0 20px 60px rgba(244,185,66,.12)!important}
+  .service-card--soon .svc-icon{background:rgba(244,185,66,.1)!important;border-color:rgba(244,185,66,.3)!important}
+  .service-card--soon:hover .svc-icon{background:var(--gold)!important;border-color:var(--gold)!important}
+  .soon-badge-pill{position:absolute;top:18px;right:18px;background:rgba(244,185,66,.1);border:1px solid rgba(244,185,66,.35);color:var(--gold);font-family:var(--font-mono);font-size:11px;font-weight:700;padding:4px 12px;border-radius:100px;letter-spacing:1px}
+  .soon-bar{margin-top:20px;height:4px;background:rgba(244,185,66,.1);border-radius:2px;overflow:hidden}
+  .soon-bar-fill{height:100%;width:65%;background:linear-gradient(90deg,var(--gold),#ffdc80);border-radius:2px;animation:barPulse 2.5s ease-in-out infinite}
+  @keyframes barPulse{0%,100%{width:62%}50%{width:72%}}
+  .soon-hint{margin-top:10px;font-size:12px;color:var(--gold);font-family:var(--font-mono);opacity:.7;transition:opacity .3s}
+  .service-card--soon:hover .soon-hint{opacity:1}
+
+  /* FLASH POPUP */
+  .flash-popup-overlay{display:none;position:fixed;inset:0;z-index:9000;background:rgba(4,8,16,.88);backdrop-filter:blur(16px);align-items:center;justify-content:center;padding:24px}
+  .flash-popup-overlay.open{display:flex}
+  .flash-popup{background:var(--bg2);border:1px solid rgba(0,255,136,.3);border-radius:24px;max-width:560px;width:100%;padding:48px 44px;position:relative;box-shadow:0 40px 120px rgba(0,0,0,.6),0 0 60px rgba(0,255,136,.08);animation:popupIn .4s cubic-bezier(.34,1.56,.64,1) both;overflow:hidden}
+  @keyframes popupIn{from{opacity:0;transform:scale(.88) translateY(30px)}to{opacity:1;transform:scale(1) translateY(0)}}
+  .flash-popup::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--neon),transparent)}
+  .flash-popup::after{content:'FLASH';position:absolute;bottom:-10px;right:20px;font-family:var(--font-head);font-size:100px;font-weight:700;opacity:.03;pointer-events:none;line-height:1;color:var(--neon)}
+  .fp-close{position:absolute;top:18px;right:20px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--muted);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:all .3s;line-height:1}
+  .fp-close:hover{background:rgba(255,78,106,.1);border-color:var(--red);color:var(--red)}
+  .fp-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.3);color:var(--neon);padding:5px 14px;border-radius:100px;font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:2px;margin-bottom:20px}
+  .fp-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--neon);animation:pulse 2s infinite}
+  .fp-title{font-family:var(--font-head);font-size:32px;font-weight:700;color:#fff;line-height:1.15;margin-bottom:14px}
+  .fp-title span{color:var(--neon)}
+  .fp-desc{font-size:15px;color:var(--muted);line-height:1.75;margin-bottom:32px}
+  .fp-features{display:flex;flex-direction:column;gap:12px;margin-bottom:36px}
+  .fp-feat{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;font-size:14px;color:var(--text)}
+  .fp-feat-dot{width:8px;height:8px;border-radius:50%;background:var(--neon);box-shadow:0 0 8px rgba(0,255,136,.5);flex-shrink:0}
+  .fp-cta{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;background:var(--neon);color:#000;padding:18px 32px;border-radius:10px;font-family:var(--font-head);font-size:15px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;box-shadow:0 0 30px rgba(0,255,136,.4);transition:all .3s;border:none}
+  .fp-cta:hover{background:#00ffaa;box-shadow:0 0 60px rgba(0,255,136,.7);transform:translateY(-2px)}
+  .fp-note{text-align:center;margin-top:16px;font-size:12px;color:var(--muted);font-family:var(--font-mono)}
+  .fp-note a{color:var(--teal);text-decoration:none}
+  .fp-note a:hover{color:var(--neon)}
+
+  /* FLASH WALLETS */
+  .flash-section{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:48px;margin-top:40px;position:relative;overflow:hidden}
+  .flash-title{font-family:var(--font-head);font-size:24px;font-weight:700;color:var(--gold);margin-bottom:8px}
+  .flash-sub{font-size:14px;color:var(--muted);margin-bottom:32px}
+  .flash-price-row{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:32px}
+  .flash-price-chip{background:rgba(244,185,66,.1);border:1px solid rgba(244,185,66,.3);border-radius:8px;padding:12px 20px;font-family:var(--font-mono)}
+  .fpc-val{color:var(--gold);font-size:22px;font-weight:600}
+  .fpc-label{color:var(--muted);font-size:11px}
+  .flash-wallets{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+  .wallet-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px;transition:all .3s}
+  .wallet-item:hover{border-color:var(--gold);box-shadow:0 0 20px rgba(244,185,66,.15)}
+  .wallet-name{font-size:13px;font-weight:600;color:#fff;margin-bottom:6px}
+  .wallet-tokens{font-size:11px;color:var(--muted);font-family:var(--font-mono);line-height:1.6}
+
+  /* ABOUT */
+  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+  .about-visual{border-radius:24px;background:var(--bg3);border:1px solid var(--border);padding:48px;display:flex;align-items:center;justify-content:center;min-height:400px}
+  .about-big-num{font-family:var(--font-head);font-size:80px;font-weight:700;color:var(--teal);line-height:1;text-shadow:0 0 60px rgba(0,201,167,.4)}
+  .about-big-label{font-size:15px;color:var(--muted);margin-top:8px}
+  .about-values{display:flex;flex-direction:column;gap:24px;margin-top:40px}
+  .about-val{display:flex;gap:20px;align-items:flex-start;padding:20px;border-radius:12px;background:var(--card);border:1px solid var(--border);transition:all .3s}
+  .about-val:hover{border-color:var(--teal);box-shadow:0 0 20px var(--glow)}
+  .av-dot{width:12px;height:12px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:5px;box-shadow:0 0 10px var(--glow)}
+  .av-title{font-family:var(--font-head);font-size:16px;font-weight:600;color:#fff;margin-bottom:6px}
+  .av-desc{font-size:13px;color:var(--muted);line-height:1.6}
+
+  /* WHY */
+  .why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px}
+  .why-card{padding:32px;border-radius:16px;border:1px solid var(--border);background:var(--card);position:relative;transition:all .4s;opacity:0;transform:scale(.95)}
+  .why-card.visible{opacity:1;transform:scale(1)}
+  .why-card:hover{border-color:var(--teal);transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,.3)}
+  .why-icon{font-size:36px;margin-bottom:20px}
+  .why-title{font-family:var(--font-head);font-size:19px;font-weight:700;color:#fff;margin-bottom:12px}
+  .why-desc{font-size:14px;color:var(--muted);line-height:1.7}
+  .why-num{position:absolute;top:20px;right:24px;font-family:var(--font-mono);font-size:48px;font-weight:700;color:rgba(0,201,167,.06)}
+
+  /* TESTIMONIALS */
+  #testimonials{background:var(--bg2)}
+  .testimonials-container{overflow:hidden}
+  .testimonials-track{display:flex;gap:24px;transition:transform .6s cubic-bezier(.23,1,.32,1)}
+  .testi-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:36px;min-width:380px;max-width:380px;flex-shrink:0;transition:all .4s}
+  .testi-card:hover{border-color:var(--teal);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+  .quote-icon{font-size:60px;color:rgba(0,201,167,.1);font-family:Georgia,serif;line-height:1;margin-bottom:16px;display:block}
+  .testi-text{font-size:15px;color:var(--text);line-height:1.8;margin-bottom:28px}
+  .testi-author{display:flex;align-items:center;gap:14px}
+  .testi-avatar{width:48px;height:48px;border-radius:50%;background:var(--bg3);border:2px solid var(--teal);display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--teal)}
+  .testi-name{font-family:var(--font-head);font-size:16px;font-weight:600;color:#fff}
+  .testi-role{font-size:12px;color:var(--muted)}
+  .testi-stars{display:flex;gap:3px;color:var(--gold);font-size:14px;margin-top:4px}
+  .testi-controls{display:flex;align-items:center;justify-content:space-between;margin-top:40px}
+  .testi-dots{display:flex;gap:8px}
+  .t-dot{width:8px;height:8px;border-radius:100px;background:var(--bg3);border:1px solid var(--border);cursor:pointer;transition:all .3s}
+  .t-dot.active{background:var(--teal);width:24px;box-shadow:0 0 10px var(--glow)}
+  .testi-arrows{display:flex;gap:12px}
+  .t-arrow{width:48px;height:48px;border:1px solid var(--border);border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;color:var(--muted)}
+  .t-arrow:hover{border-color:var(--teal);color:var(--teal);background:rgba(0,201,167,.1)}
+
+  /* FAQ */
+  .faq-list{max-width:800px;margin:0 auto}
+  .faq-item{border-bottom:1px solid var(--border)}
+  .faq-q{display:flex;align-items:center;justify-content:space-between;padding:24px 0;cursor:pointer;font-family:var(--font-head);font-size:17px;font-weight:600;color:var(--text);transition:color .3s;gap:20px}
+  .faq-q:hover{color:var(--teal)}
+  .faq-icon{width:32px;height:32px;flex-shrink:0;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--teal);transition:all .3s}
+  .faq-item.open .faq-icon{transform:rotate(45deg);background:var(--teal);color:#000;border-color:var(--teal)}
+  .faq-a{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s;font-size:15px;color:var(--muted);line-height:1.8}
+  .faq-item.open .faq-a{max-height:200px;padding-bottom:24px}
+
+  /* CONTACT */
+  #contact{background:var(--bg2);position:relative;overflow:hidden}
+  .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
+  .contact-info h3{font-family:var(--font-head);font-size:32px;font-weight:700;color:#fff;margin-bottom:16px}
+  .contact-info p{font-size:16px;color:var(--muted);margin-bottom:40px;line-height:1.7}
+  .contact-channels{display:flex;flex-direction:column;gap:16px}
+  .channel-link{display:flex;align-items:center;gap:16px;padding:18px 24px;background:var(--card);border:1px solid var(--border);border-radius:12px;text-decoration:none;color:var(--text);transition:all .3s}
+  .channel-link:hover{border-color:var(--teal);color:var(--teal);box-shadow:0 0 20px var(--glow);transform:translateX(4px)}
+  .channel-icon{width:44px;height:44px;background:rgba(0,201,167,.1);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+  .channel-label{font-family:var(--font-head);font-size:16px;font-weight:600}
+  .channel-handle{font-size:13px;color:var(--muted);font-family:var(--font-mono)}
+  .contact-form{display:flex;flex-direction:column;gap:20px}
+  .form-group{display:flex;flex-direction:column;gap:8px}
+  .form-label{font-size:13px;color:var(--muted);letter-spacing:1px;font-family:var(--font-mono)}
+  .form-input,.form-select,.form-textarea{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 18px;color:var(--text);font-family:var(--font-body);font-size:15px;transition:border-color .3s,box-shadow .3s;width:100%;outline:none}
+  .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,201,167,.1)}
+  .form-select option{background:var(--bg2)}
+  .form-textarea{resize:vertical;min-height:120px}
+  .form-submit{background:var(--teal);color:#000;border:none;padding:16px 32px;border-radius:8px;font-family:var(--font-head);font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .3s;box-shadow:0 0 20px var(--glow)}
+  .form-submit:hover{background:var(--neon);box-shadow:0 0 40px rgba(0,255,136,.5);transform:translateY(-2px)}
+
+  /* FOOTER */
+  footer{background:var(--bg);border-top:1px solid var(--border);padding:60px 60px 40px}
+  .footer-top{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:40px;margin-bottom:48px}
+  .footer-brand p{font-size:14px;color:var(--muted);max-width:280px;line-height:1.7;margin-top:14px}
+  .footer-links h4{font-family:var(--font-head);font-size:13px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:20px}
+  .footer-links ul{list-style:none;display:flex;flex-direction:column;gap:12px}
+  .footer-links a{color:var(--muted);text-decoration:none;font-size:14px;transition:color .3s}
+  .footer-links a:hover{color:var(--teal)}
+  .footer-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;padding-top:32px;border-top:1px solid var(--border);font-size:13px;color:var(--muted)}
+  .teal{color:var(--teal)}
+
+  @media(max-width:900px){
+    nav{padding:18px 24px}
+    nav.scrolled{padding:14px 24px}
+    .nav-links,.nav-cta{display:none}
+    .hamburger{display:flex}
+    section{padding:70px 24px}
+    #hero{padding:100px 24px 60px;flex-direction:column}
+    .hero-stats{margin:40px 0 0;flex-direction:row;flex-wrap:wrap}
+    .about-grid,.contact-grid{grid-template-columns:1fr;gap:40px}
+    .steps-row::before{display:none}
+    footer{padding:40px 24px 30px}
+    .footer-top{flex-direction:column}
+    .footer-bottom{flex-direction:column;text-align:center}
+    .flash-section{padding:32px 24px}
+    .divider{margin:0 24px}
+    .flash-popup{padding:28px 20px}
+    .fp-title{font-size:24px}
   }
 </style>
 </head>
 <body>
 
-<!-- CURSOR -->
 <div class="cursor" id="cursor"></div>
 <div class="cursor-ring" id="cursorRing"></div>
 
 <!-- MOBILE NAV -->
 <div class="mobile-nav" id="mobileNav">
-  <button class="mobile-close" onclick="closeMobileNav()">✕</button>
+  <button class="mobile-close" onclick="closeMobileNav()">&#10005;</button>
   <a href="#hero" onclick="closeMobileNav()">Home</a>
   <a href="#rates" onclick="closeMobileNav()">Rates</a>
   <a href="#services" onclick="closeMobileNav()">Services</a>
@@ -893,27 +324,16 @@
     <li><a href="#faq">FAQ</a></li>
   </ul>
   <a class="nav-cta" href="#contact">Get a Quote</a>
-  <div class="hamburger" onclick="openMobileNav()">
-    <span></span><span></span><span></span>
-  </div>
+  <div class="hamburger" id="hamburgerBtn"><span></span><span></span><span></span></div>
 </nav>
 
 <!-- HERO -->
 <section id="hero">
   <canvas id="hero-canvas"></canvas>
   <div class="hero-content">
-    <div class="hero-badge">
-      <div class="badge-dot"></div>
-      OTC CRYPTO BROKERAGE · INDIA
-    </div>
-    <h1 class="hero-title">
-      Fast.<br>
-      <span class="accent glow-text">Secure.</span><br>
-      Reliable Crypto Deals.
-    </h1>
-    <p class="hero-sub">
-      NAD Crypto Desk connects you to the best OTC crypto rates in India. Direct deals, competitive pricing, and trusted execution — every time.
-    </p>
+    <div class="hero-badge"><div class="badge-dot"></div>OTC CRYPTO BROKERAGE &middot; INDIA</div>
+    <h1 class="hero-title">Fast.<br><span class="accent glow-text">Secure.</span><br>Reliable Crypto Deals.</h1>
+    <p class="hero-sub">NAD Crypto Desk connects you to the best OTC crypto rates in India. Direct deals, competitive pricing, and trusted execution &mdash; every time.</p>
     <div class="hero-btns">
       <a href="#contact" class="btn-primary">
         <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
@@ -926,72 +346,63 @@
     </div>
   </div>
   <div class="hero-stats">
-    <div class="stat-card">
-      <div class="stat-val" id="ticker-usd">₹120</div>
-      <div class="stat-label">Standard USD Rate</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-val">₹110</div>
-      <div class="stat-label">Bulk Rate (>$1000)</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-val" style="color:var(--gold)">⚡ ₹20</div>
-      <div class="stat-label">Flash Service Rate</div>
-    </div>
+    <div class="stat-card"><div class="stat-val" id="ticker-usd">&#8377;120.00</div><div class="stat-label">Standard USD Rate</div></div>
+    <div class="stat-card"><div class="stat-val">&#8377;110</div><div class="stat-label">Bulk Rate (&gt;$1000)</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--gold)">&#9889; &#8377;20</div><div class="stat-label">Flash Service Rate</div></div>
   </div>
 </section>
 
 <!-- TICKER -->
 <div class="ticker-wrap" aria-hidden="true">
-  <div class="ticker" id="tickerStrip">
-    <div class="ticker-item"><span class="t-name">BTC/INR</span> 72,45,310 <span class="t-up">▲ 2.1%</span></div>
-    <div class="ticker-item"><span class="t-name">ETH/INR</span> 2,34,820 <span class="t-up">▲ 1.4%</span></div>
-    <div class="ticker-item"><span class="t-name">USDT/INR</span> 120.00 <span class="t-up">▲ 0.2%</span></div>
-    <div class="ticker-item"><span class="t-name">SOL/INR</span> 14,230 <span class="t-down">▼ 0.8%</span></div>
-    <div class="ticker-item"><span class="t-name">BNB/INR</span> 52,710 <span class="t-up">▲ 1.1%</span></div>
-    <div class="ticker-item"><span class="t-name">TRX/INR</span> 22.15 <span class="t-up">▲ 0.5%</span></div>
-    <div class="ticker-item"><span class="t-name">USDC/INR</span> 119.80 <span class="t-down">▼ 0.1%</span></div>
-    <div class="ticker-item"><span class="t-name">BTC/INR</span> 72,45,310 <span class="t-up">▲ 2.1%</span></div>
-    <div class="ticker-item"><span class="t-name">ETH/INR</span> 2,34,820 <span class="t-up">▲ 1.4%</span></div>
-    <div class="ticker-item"><span class="t-name">USDT/INR</span> 120.00 <span class="t-up">▲ 0.2%</span></div>
-    <div class="ticker-item"><span class="t-name">SOL/INR</span> 14,230 <span class="t-down">▼ 0.8%</span></div>
-    <div class="ticker-item"><span class="t-name">BNB/INR</span> 52,710 <span class="t-up">▲ 1.1%</span></div>
-    <div class="ticker-item"><span class="t-name">TRX/INR</span> 22.15 <span class="t-up">▲ 0.5%</span></div>
-    <div class="ticker-item"><span class="t-name">USDC/INR</span> 119.80 <span class="t-down">▼ 0.1%</span></div>
+  <div class="ticker">
+    <div class="ticker-item"><span class="t-name">BTC/INR</span>72,45,310<span class="t-up">&#9650; 2.1%</span></div>
+    <div class="ticker-item"><span class="t-name">ETH/INR</span>2,34,820<span class="t-up">&#9650; 1.4%</span></div>
+    <div class="ticker-item"><span class="t-name">USDT/INR</span>120.00<span class="t-up">&#9650; 0.2%</span></div>
+    <div class="ticker-item"><span class="t-name">SOL/INR</span>14,230<span class="t-down">&#9660; 0.8%</span></div>
+    <div class="ticker-item"><span class="t-name">BNB/INR</span>52,710<span class="t-up">&#9650; 1.1%</span></div>
+    <div class="ticker-item"><span class="t-name">TRX/INR</span>22.15<span class="t-up">&#9650; 0.5%</span></div>
+    <div class="ticker-item"><span class="t-name">USDC/INR</span>119.80<span class="t-down">&#9660; 0.1%</span></div>
+    <div class="ticker-item"><span class="t-name">BTC/INR</span>72,45,310<span class="t-up">&#9650; 2.1%</span></div>
+    <div class="ticker-item"><span class="t-name">ETH/INR</span>2,34,820<span class="t-up">&#9650; 1.4%</span></div>
+    <div class="ticker-item"><span class="t-name">USDT/INR</span>120.00<span class="t-up">&#9650; 0.2%</span></div>
+    <div class="ticker-item"><span class="t-name">SOL/INR</span>14,230<span class="t-down">&#9660; 0.8%</span></div>
+    <div class="ticker-item"><span class="t-name">BNB/INR</span>52,710<span class="t-up">&#9650; 1.1%</span></div>
+    <div class="ticker-item"><span class="t-name">TRX/INR</span>22.15<span class="t-up">&#9650; 0.5%</span></div>
+    <div class="ticker-item"><span class="t-name">USDC/INR</span>119.80<span class="t-down">&#9660; 0.1%</span></div>
   </div>
 </div>
 
 <!-- LIVE RATES -->
 <section id="rates">
   <div class="section-header">
-    <div class="section-badge">⬤ Live Rates</div>
+    <div class="section-badge">&#11044; Live Rates</div>
     <h2 class="section-title u-line">Transparent Pricing</h2>
-    <p class="section-sub">Real-time rates with no hidden fees. What you see is what you get — guaranteed.</p>
+    <p class="section-sub">Real-time rates with no hidden fees. What you see is what you get &mdash; guaranteed.</p>
   </div>
   <div class="rates-grid">
     <div class="rate-card">
-      <div class="rc-badge buy">BUY</div>
-      <div class="rc-label">Standard — Any Volume</div>
-      <div class="rc-pair">USD → INR</div>
-      <div class="rc-val">₹120 <span class="rc-unit">/ USD</span></div>
+      <div class="rc-badge">BUY</div>
+      <div class="rc-label">Standard &mdash; Any Volume</div>
+      <div class="rc-pair">USD &rarr; INR</div>
+      <div class="rc-val">&#8377;120 <span class="rc-unit">/ USD</span></div>
     </div>
     <div class="rate-card">
-      <div class="rc-badge bulk">BULK</div>
-      <div class="rc-label">Volume > $1,000</div>
-      <div class="rc-pair">USD → INR</div>
-      <div class="rc-val">₹110 <span class="rc-unit">/ USD</span></div>
+      <div class="rc-badge" style="background:rgba(244,185,66,.1);color:var(--gold);border:1px solid rgba(244,185,66,.3)">BULK</div>
+      <div class="rc-label">Volume &gt; $1,000</div>
+      <div class="rc-pair">USD &rarr; INR</div>
+      <div class="rc-val">&#8377;110 <span class="rc-unit">/ USD</span></div>
     </div>
     <div class="rate-card">
-      <div class="rc-badge sell" style="background:rgba(244,185,66,0.1);color:var(--gold);border-color:rgba(244,185,66,0.3);">⚡ FLASH</div>
-      <div class="rc-label">Flash Service — Standard</div>
+      <div class="rc-badge" style="background:rgba(244,185,66,.1);color:var(--gold);border:1px solid rgba(244,185,66,.3)">&#9889; FLASH</div>
+      <div class="rc-label">Flash Service &mdash; Standard</div>
       <div class="rc-pair">Flash Tokens</div>
-      <div class="rc-val" style="color:var(--gold)">₹20 <span class="rc-unit">/ USD</span></div>
+      <div class="rc-val" style="color:var(--gold)">&#8377;20 <span class="rc-unit">/ USD</span></div>
     </div>
     <div class="rate-card">
-      <div class="rc-badge buy" style="background:rgba(0,255,136,0.1);color:var(--neon);border-color:rgba(0,255,136,0.3);">FLASH BULK</div>
-      <div class="rc-label">Flash Volume — Negotiable</div>
+      <div class="rc-badge">FLASH BULK</div>
+      <div class="rc-label">Flash Volume &mdash; Negotiable</div>
       <div class="rc-pair">Flash Tokens</div>
-      <div class="rc-val" style="color:var(--neon)">₹15 <span class="rc-unit">/ USD</span></div>
+      <div class="rc-val" style="color:var(--neon)">&#8377;15 <span class="rc-unit">/ USD</span></div>
     </div>
   </div>
   <div class="rate-note">
@@ -1005,31 +416,15 @@
 <!-- HOW IT WORKS -->
 <section id="how">
   <div class="section-header text-center">
-    <div class="section-badge">● Process</div>
+    <div class="section-badge">&#9679; Process</div>
     <h2 class="section-title">How It Works</h2>
     <p class="section-sub">Four simple steps to get your crypto deal executed safely and swiftly.</p>
   </div>
   <div class="steps-row">
-    <div class="step">
-      <div class="step-num">01</div>
-      <div class="step-title">Request a Quote</div>
-      <p class="step-desc">Reach out via Telegram, WhatsApp, or our contact form. Tell us your requirements — amount, token, network.</p>
-    </div>
-    <div class="step" style="transition-delay:0.1s">
-      <div class="step-num">02</div>
-      <div class="step-title">Confirm Rate</div>
-      <p class="step-desc">We lock in your rate based on volume and current market. Bulk and negotiated deals welcome.</p>
-    </div>
-    <div class="step" style="transition-delay:0.2s">
-      <div class="step-num">03</div>
-      <div class="step-title">Execute Transaction</div>
-      <p class="step-desc">Send or receive payment. Our team handles execution with precision and speed.</p>
-    </div>
-    <div class="step" style="transition-delay:0.3s">
-      <div class="step-num">04</div>
-      <div class="step-title">Deal Complete</div>
-      <p class="step-desc">Crypto or INR lands in your account. Confirmation sent. Ready for the next one.</p>
-    </div>
+    <div class="step"><div class="step-num">01</div><div class="step-title">Request a Quote</div><p class="step-desc">Reach out via Telegram, WhatsApp, or our contact form. Tell us your requirements &mdash; amount, token, network.</p></div>
+    <div class="step" style="transition-delay:.1s"><div class="step-num">02</div><div class="step-title">Confirm Rate</div><p class="step-desc">We lock in your rate based on volume and current market. Bulk and negotiated deals welcome.</p></div>
+    <div class="step" style="transition-delay:.2s"><div class="step-num">03</div><div class="step-title">Execute Transaction</div><p class="step-desc">Send or receive payment. Our team handles execution with precision and speed.</p></div>
+    <div class="step" style="transition-delay:.3s"><div class="step-num">04</div><div class="step-title">Deal Complete</div><p class="step-desc">Crypto or INR lands in your account. Confirmation sent. Ready for the next one.</p></div>
   </div>
 </section>
 
@@ -1038,84 +433,71 @@
 <!-- SERVICES -->
 <section id="services">
   <div class="section-header">
-    <div class="section-badge">◈ Services</div>
+    <div class="section-badge">&#10070; Services</div>
     <h2 class="section-title u-line">What We Offer</h2>
     <p class="section-sub">From standard OTC to cutting-edge flash services across all major wallets and networks.</p>
   </div>
   <div class="services-grid">
     <div class="service-card">
-      <div class="svc-icon">🏦</div>
+      <div class="svc-icon">&#127970;</div>
       <div class="svc-title">Crypto Buying</div>
       <p class="svc-desc">Buy USDT, BTC, ETH, SOL, TRX, and more at competitive INR rates. Standard and bulk volumes both supported.</p>
     </div>
-    <div class="service-card" style="transition-delay:0.1s">
-      <div class="svc-icon">💰</div>
+    <div class="service-card" style="transition-delay:.1s">
+      <div class="svc-icon">&#128176;</div>
       <div class="svc-title">Crypto Selling</div>
       <p class="svc-desc">Sell your crypto holdings for INR with fast settlement. We offer fair market rates and quick processing.</p>
     </div>
-    <div class="service-card" style="transition-delay:0.2s">
-      <div class="svc-icon">📊</div>
+    <div class="service-card" style="transition-delay:.2s">
+      <div class="svc-icon">&#128202;</div>
       <div class="svc-title">Bulk OTC Deals</div>
       <p class="svc-desc">High-volume transactions with negotiated rates. Dedicated support for deals above $1,000. Discreet and secure.</p>
     </div>
-    <div class="service-card" style="transition-delay:0.3s">
-      <div class="svc-icon">⚡</div>
+    <div class="service-card" style="transition-delay:.3s">
+      <div class="svc-icon">&#9889;</div>
       <div class="svc-title">Flash Services</div>
       <p class="svc-desc">Specialized flash token transactions across Binance, Bybit, Trust Wallet, MetaMask, Coinbase, Tronlink, and more.</p>
+    </div>
+    <!-- FREE FLASH GENERATOR -->
+    <div class="service-card service-card--flash-gen" id="flashGenCard" style="transition-delay:.4s">
+      <div class="free-badge-pill">&#127353; FREE</div>
+      <div class="svc-icon">&#129668;</div>
+      <div class="svc-title">Flash Crypto Generator</div>
+      <p class="svc-desc">Generate flash crypto yourself &mdash; completely free. No middleman needed. Click to launch the generator and get started instantly.</p>
+      <div class="svc-launch-btn">
+        <span>Launch Generator</span>
+        <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      </div>
+    </div>
+    <!-- AIRDROPS COMING SOON -->
+    <div class="service-card service-card--soon" style="transition-delay:.5s">
+      <div class="soon-badge-pill">&#128252; COMING SOON</div>
+      <div class="svc-icon">&#129666;</div>
+      <div class="svc-title">Airdrops</div>
+      <p class="svc-desc">Exclusive crypto airdrops curated for NAD Crypto Desk users. Early access, verified drops, zero spam. Stay tuned &mdash; big things loading.</p>
+      <div class="soon-bar"><div class="soon-bar-fill"></div></div>
+      <div class="soon-hint">Notify me when live &rarr;</div>
     </div>
   </div>
 
   <!-- FLASH WALLETS -->
   <div class="flash-section">
-    <div class="flash-title">⚡ Flash Service Wallets & Networks</div>
+    <div class="flash-title">&#9889; Flash Service Wallets &amp; Networks</div>
     <p class="flash-sub">We support flash operations across all major wallets and token standards.</p>
     <div class="flash-price-row">
-      <div class="flash-price-chip">
-        <div class="fpc-val">₹20</div>
-        <div class="fpc-label">/ USD — Standard</div>
-      </div>
-      <div class="flash-price-chip">
-        <div class="fpc-val">₹15</div>
-        <div class="fpc-label">/ USD — Bulk (Negotiable)</div>
-      </div>
+      <div class="flash-price-chip"><div class="fpc-val">&#8377;20</div><div class="fpc-label">/ USD &mdash; Standard</div></div>
+      <div class="flash-price-chip"><div class="fpc-val">&#8377;15</div><div class="fpc-label">/ USD &mdash; Bulk (Negotiable)</div></div>
     </div>
     <div class="flash-wallets">
-      <div class="wallet-item">
-        <div class="wallet-name">🔶 Binance Web3</div>
-        <div class="wallet-tokens">USDT TON · GOLD TON · EURO TON</div>
-      </div>
-      <div class="wallet-item">
-        <div class="wallet-name">🟡 Bybit Web3</div>
-        <div class="wallet-tokens">USDT TON · GOLD TON · EURO TON</div>
-      </div>
-      <div class="wallet-item">
-        <div class="wallet-name">🛡️ Trust Wallet</div>
-        <div class="wallet-tokens">USDT BEP20 · USDT SOL · SOL · USDT.Z BEP20 · USD.T BEP20 · BPX TRC20 · USD.T ERC20 · WERC ERC20 · sETH ERC20 · USDG BEP20 · SHIBABTC</div>
-      </div>
-      <div class="wallet-item">
-        <div class="wallet-name">🦊 MetaMask</div>
-        <div class="wallet-tokens">USDT SOL · BTC SOL · USDC SOL</div>
-      </div>
-      <div class="wallet-item">
-        <div class="wallet-name">🔵 Coinbase</div>
-        <div class="wallet-tokens">USDT.Z BEP20 · USD.T BEP20</div>
-      </div>
-      <div class="wallet-item">
-        <div class="wallet-name">⚡ Tronlink</div>
-        <div class="wallet-tokens">USDT TRC20 · TRX</div>
-      </div>
-      <div class="wallet-item">
-        <div class="wallet-name">🔒 SafePal</div>
-        <div class="wallet-tokens">USDT SOL · BTC SOL</div>
-      </div>
-      <div class="wallet-item">
-        <div class="wallet-name">⬛ OKX Web3</div>
-        <div class="wallet-tokens">GOLD TON · EURO TON</div>
-      </div>
-      <div class="wallet-item">
-        <div class="wallet-name">🟢 KuCoin Web3</div>
-        <div class="wallet-tokens">EURC TRC20 · USDT TRC20 · EURC BEP20 · EURC ERC20</div>
-      </div>
+      <div class="wallet-item"><div class="wallet-name">&#128310; Binance Web3</div><div class="wallet-tokens">USDT TON &middot; GOLD TON &middot; EURO TON</div></div>
+      <div class="wallet-item"><div class="wallet-name">&#128993; Bybit Web3</div><div class="wallet-tokens">USDT TON &middot; GOLD TON &middot; EURO TON</div></div>
+      <div class="wallet-item"><div class="wallet-name">&#128737; Trust Wallet</div><div class="wallet-tokens">USDT BEP20 &middot; USDT SOL &middot; SOL &middot; USDT.Z BEP20 &middot; USD.T BEP20 &middot; BPX TRC20 &middot; USD.T ERC20 &middot; WERC ERC20 &middot; sETH ERC20 &middot; USDG BEP20 &middot; SHIBABTC</div></div>
+      <div class="wallet-item"><div class="wallet-name">&#129418; MetaMask</div><div class="wallet-tokens">USDT SOL &middot; BTC SOL &middot; USDC SOL</div></div>
+      <div class="wallet-item"><div class="wallet-name">&#128309; Coinbase</div><div class="wallet-tokens">USDT.Z BEP20 &middot; USD.T BEP20</div></div>
+      <div class="wallet-item"><div class="wallet-name">&#9889; Tronlink</div><div class="wallet-tokens">USDT TRC20 &middot; TRX</div></div>
+      <div class="wallet-item"><div class="wallet-name">&#128274; SafePal</div><div class="wallet-tokens">USDT SOL &middot; BTC SOL</div></div>
+      <div class="wallet-item"><div class="wallet-name">&#11035; OKX Web3</div><div class="wallet-tokens">GOLD TON &middot; EURO TON</div></div>
+      <div class="wallet-item"><div class="wallet-name">&#128994; KuCoin Web3</div><div class="wallet-tokens">EURC TRC20 &middot; USDT TRC20 &middot; EURC BEP20 &middot; EURC ERC20</div></div>
     </div>
   </div>
 </section>
@@ -1124,46 +506,24 @@
 <section id="about">
   <div class="about-grid">
     <div>
-      <div class="section-badge">◉ About Us</div>
+      <div class="section-badge">&#9711; About Us</div>
       <h2 class="section-title u-line">NAD Crypto Desk</h2>
-      <p style="font-size:16px;color:var(--muted);line-height:1.8;margin-bottom:32px;">
-        NAD Crypto Desk is a trusted OTC crypto brokerage operating in India. We bridge the gap between crypto markets and real-world INR transactions — offering speed, reliability, and competitive pricing that you won't find anywhere else.
-      </p>
-      <p style="font-size:16px;color:var(--muted);line-height:1.8;margin-bottom:40px;">
-        Our team combines deep market knowledge with a commitment to client confidentiality and seamless execution. Whether you're an individual buyer or managing large volumes, we treat every deal with the same level of professionalism.
-      </p>
+      <p style="font-size:16px;color:var(--muted);line-height:1.8;margin-bottom:32px">NAD Crypto Desk is a trusted OTC crypto brokerage operating in India. We bridge the gap between crypto markets and real-world INR transactions &mdash; offering speed, reliability, and competitive pricing that you won't find anywhere else.</p>
+      <p style="font-size:16px;color:var(--muted);line-height:1.8;margin-bottom:40px">Our team combines deep market knowledge with a commitment to client confidentiality and seamless execution. Whether you're an individual buyer or managing large volumes, we treat every deal with the same level of professionalism.</p>
       <div class="about-values">
-        <div class="about-val">
-          <div class="av-dot"></div>
-          <div><div class="av-title">Speed First</div><div class="av-desc">Most deals executed within minutes of confirmation. No delays, no excuses.</div></div>
-        </div>
-        <div class="about-val">
-          <div class="av-dot" style="background:var(--neon);box-shadow:0 0 10px rgba(0,255,136,0.5);"></div>
-          <div><div class="av-title">100% Transparent</div><div class="av-desc">You see the rate before you commit. No hidden charges, no surprises.</div></div>
-        </div>
-        <div class="about-val">
-          <div class="av-dot" style="background:var(--gold);box-shadow:0 0 10px rgba(244,185,66,0.5);"></div>
-          <div><div class="av-title">Client Confidentiality</div><div class="av-desc">All deals handled with complete discretion. Your data stays private.</div></div>
-        </div>
+        <div class="about-val"><div class="av-dot"></div><div><div class="av-title">Speed First</div><div class="av-desc">Most deals executed within minutes of confirmation. No delays, no excuses.</div></div></div>
+        <div class="about-val"><div class="av-dot" style="background:var(--neon);box-shadow:0 0 10px rgba(0,255,136,.5)"></div><div><div class="av-title">100% Transparent</div><div class="av-desc">You see the rate before you commit. No hidden charges, no surprises.</div></div></div>
+        <div class="about-val"><div class="av-dot" style="background:var(--gold);box-shadow:0 0 10px rgba(244,185,66,.5)"></div><div><div class="av-title">Client Confidentiality</div><div class="av-desc">All deals handled with complete discretion. Your data stays private.</div></div></div>
       </div>
     </div>
     <div class="about-visual">
-      <div class="about-canvas-wrap">
-        <div class="about-big-num" id="countNum">₹0</div>
+      <div style="text-align:center">
+        <div class="about-big-num" id="countNum">&#8377;0</div>
         <div class="about-big-label">in transactions processed</div>
-        <div style="margin-top:48px;display:flex;gap:32px;justify-content:center;">
-          <div style="text-align:center;">
-            <div style="font-family:var(--font-head);font-size:36px;font-weight:700;color:#fff;" id="countClients">100+</div>
-            <div style="font-size:13px;color:var(--muted);">Happy Clients</div>
-          </div>
-          <div style="text-align:center;">
-            <div style="font-family:var(--font-head);font-size:36px;font-weight:700;color:#fff;">9+</div>
-            <div style="font-size:13px;color:var(--muted);">Wallets Supported</div>
-          </div>
-          <div style="text-align:center;">
-            <div style="font-family:var(--font-head);font-size:36px;font-weight:700;color:#fff;">24/7</div>
-            <div style="font-size:13px;color:var(--muted);">Availability</div>
-          </div>
+        <div style="margin-top:48px;display:flex;gap:32px;justify-content:center">
+          <div style="text-align:center"><div style="font-family:var(--font-head);font-size:36px;font-weight:700;color:#fff">500+</div><div style="font-size:13px;color:var(--muted)">Happy Clients</div></div>
+          <div style="text-align:center"><div style="font-family:var(--font-head);font-size:36px;font-weight:700;color:#fff">9+</div><div style="font-size:13px;color:var(--muted)">Wallets Supported</div></div>
+          <div style="text-align:center"><div style="font-family:var(--font-head);font-size:36px;font-weight:700;color:#fff">24/7</div><div style="font-size:13px;color:var(--muted)">Availability</div></div>
         </div>
       </div>
     </div>
@@ -1173,37 +533,17 @@
 <div class="divider"></div>
 
 <!-- WHY CHOOSE US -->
-<section id="why" style="background:var(--bg2);">
+<section id="why" style="background:var(--bg2)">
   <div class="section-header text-center">
-    <div class="section-badge">★ Why NAD</div>
+    <div class="section-badge">&#9733; Why NAD</div>
     <h2 class="section-title">Why Choose Us</h2>
     <p class="section-sub">We've built our reputation on four uncompromising pillars of service.</p>
   </div>
   <div class="why-grid">
-    <div class="why-card">
-      <div class="why-num">01</div>
-      <div class="why-icon">⚡</div>
-      <div class="why-title">Fast Execution</div>
-      <p class="why-desc">Lightning-fast deal processing. We move at the speed of the market — so you never miss your window.</p>
-    </div>
-    <div class="why-card" style="transition-delay:0.1s">
-      <div class="why-num">02</div>
-      <div class="why-icon">💎</div>
-      <div class="why-title">Competitive Rates</div>
-      <p class="why-desc">Among the best OTC rates in India. Volume discounts and bulk negotiations available for larger deals.</p>
-    </div>
-    <div class="why-card" style="transition-delay:0.2s">
-      <div class="why-num">03</div>
-      <div class="why-icon">🔒</div>
-      <div class="why-title">Secure Transactions</div>
-      <p class="why-desc">Every deal is handled with industry-grade security protocols. Your funds and identity stay protected.</p>
-    </div>
-    <div class="why-card" style="transition-delay:0.3s">
-      <div class="why-num">04</div>
-      <div class="why-icon">🎯</div>
-      <div class="why-title">Dedicated Support</div>
-      <p class="why-desc">Real humans, real-time. Reach us on Telegram or WhatsApp and get answers — not bots, not delays.</p>
-    </div>
+    <div class="why-card"><div class="why-num">01</div><div class="why-icon">&#9889;</div><div class="why-title">Fast Execution</div><p class="why-desc">Lightning-fast deal processing. We move at the speed of the market &mdash; so you never miss your window.</p></div>
+    <div class="why-card" style="transition-delay:.1s"><div class="why-num">02</div><div class="why-icon">&#128142;</div><div class="why-title">Competitive Rates</div><p class="why-desc">Among the best OTC rates in India. Volume discounts and bulk negotiations available for larger deals.</p></div>
+    <div class="why-card" style="transition-delay:.2s"><div class="why-num">03</div><div class="why-icon">&#128274;</div><div class="why-title">Secure Transactions</div><p class="why-desc">Every deal is handled with industry-grade security protocols. Your funds and identity stay protected.</p></div>
+    <div class="why-card" style="transition-delay:.3s"><div class="why-num">04</div><div class="why-icon">&#127919;</div><div class="why-title">Dedicated Support</div><p class="why-desc">Real humans, real-time. Reach us on Telegram or WhatsApp and get answers &mdash; not bots, not delays.</p></div>
   </div>
 </section>
 
@@ -1212,70 +552,22 @@
 <!-- TESTIMONIALS -->
 <section id="testimonials">
   <div class="section-header">
-    <div class="section-badge">◆ Testimonials</div>
+    <div class="section-badge">&#9830; Testimonials</div>
     <h2 class="section-title u-line">What Clients Say</h2>
     <p class="section-sub">Trusted by crypto traders, businesses, and investors across India.</p>
   </div>
   <div class="testimonials-container">
     <div class="testimonials-track" id="testiTrack">
-      <div class="testi-card">
-        <span class="quote-icon">"</span>
-        <p class="testi-text">NAD Crypto Desk handled my bulk USDT deal seamlessly. The rate was the best I found after checking five brokers. Will definitely be coming back for future transactions.</p>
-        <div class="testi-author">
-          <div class="testi-avatar">R</div>
-          <div>
-            <div class="testi-name">Rahul M.</div>
-            <div class="testi-role">Crypto Trader, Delhi</div>
-            <div class="testi-stars">★★★★★</div>
-          </div>
-        </div>
-      </div>
-      <div class="testi-card">
-        <span class="quote-icon">"</span>
-        <p class="testi-text">I was skeptical about OTC deals at first, but NAD made the whole process transparent and fast. Got my INR within minutes of sending. Highly professional team.</p>
-        <div class="testi-author">
-          <div class="testi-avatar">A</div>
-          <div>
-            <div class="testi-name">Ayesha K.</div>
-            <div class="testi-role">Business Owner, Mumbai</div>
-            <div class="testi-stars">★★★★★</div>
-          </div>
-        </div>
-      </div>
-      <div class="testi-card">
-        <span class="quote-icon">"</span>
-        <p class="testi-text">The flash service is insane — I didn't believe it until I saw it work. NAD Crypto Desk is my go-to now. Rates are fair, execution is lightning fast.</p>
-        <div class="testi-author">
-          <div class="testi-avatar">S</div>
-          <div>
-            <div class="testi-name">Siddharth P.</div>
-            <div class="testi-role">Crypto Investor, Bangalore</div>
-            <div class="testi-stars">★★★★★</div>
-          </div>
-        </div>
-      </div>
-      <div class="testi-card">
-        <span class="quote-icon">"</span>
-        <p class="testi-text">Excellent communication throughout the whole process. They confirmed my rate, executed the deal, and I had my crypto in minutes. Zero stress experience.</p>
-        <div class="testi-author">
-          <div class="testi-avatar">V</div>
-          <div>
-            <div class="testi-name">Vikram T.</div>
-            <div class="testi-role">Freelancer & USDT Holder</div>
-            <div class="testi-stars">★★★★★</div>
-          </div>
-        </div>
-      </div>
+      <div class="testi-card"><span class="quote-icon">"</span><p class="testi-text">NAD Crypto Desk handled my bulk USDT deal seamlessly. The rate was the best I found after checking five brokers. Will definitely be coming back for future transactions.</p><div class="testi-author"><div class="testi-avatar">R</div><div><div class="testi-name">Rahul M.</div><div class="testi-role">Crypto Trader, Delhi</div><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div></div></div></div>
+      <div class="testi-card"><span class="quote-icon">"</span><p class="testi-text">I was skeptical about OTC deals at first, but NAD made the whole process transparent and fast. Got my INR within minutes of sending. Highly professional team.</p><div class="testi-author"><div class="testi-avatar">A</div><div><div class="testi-name">Ayesha K.</div><div class="testi-role">Business Owner, Mumbai</div><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div></div></div></div>
+      <div class="testi-card"><span class="quote-icon">"</span><p class="testi-text">The flash service is insane &mdash; I didn't believe it until I saw it work. NAD Crypto Desk is my go-to now. Rates are fair, execution is lightning fast.</p><div class="testi-author"><div class="testi-avatar">S</div><div><div class="testi-name">Siddharth P.</div><div class="testi-role">Crypto Investor, Bangalore</div><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div></div></div></div>
+      <div class="testi-card"><span class="quote-icon">"</span><p class="testi-text">Excellent communication throughout the whole process. They confirmed my rate, executed the deal, and I had my crypto in minutes. Zero stress experience.</p><div class="testi-author"><div class="testi-avatar">V</div><div><div class="testi-name">Vikram T.</div><div class="testi-role">Freelancer &amp; USDT Holder</div><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div></div></div></div>
     </div>
     <div class="testi-controls">
       <div class="testi-dots" id="testiDots"></div>
       <div class="testi-arrows">
-        <button class="t-arrow" onclick="testiPrev()" aria-label="Previous">
-          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-        </button>
-        <button class="t-arrow" onclick="testiNext()" aria-label="Next">
-          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-        </button>
+        <button class="t-arrow" id="tPrev">&#8592;</button>
+        <button class="t-arrow" id="tNext">&#8594;</button>
       </div>
     </div>
   </div>
@@ -1291,48 +583,12 @@
     <p class="section-sub">Everything you need to know before your first deal.</p>
   </div>
   <div class="faq-list">
-    <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)">
-        Are the rates fixed or negotiable?
-        <span class="faq-icon">+</span>
-      </div>
-      <div class="faq-a">Rates may vary based on volume and real-time market conditions. The listed rates are indicative. For large or bulk transactions, better rates can be negotiated directly. Contact us before initiating any deal.</div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)">
-        Is there a minimum transaction amount?
-        <span class="faq-icon">+</span>
-      </div>
-      <div class="faq-a">We handle transactions of all sizes. However, bulk rates (₹110/USD) kick in for deals exceeding $1,000 equivalent. Flash service rates apply to flash token transactions regardless of size.</div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)">
-        How long does a transaction take?
-        <span class="faq-icon">+</span>
-      </div>
-      <div class="faq-a">Standard OTC deals are typically completed within a few minutes of confirmation. Flash service transactions are near-instant. Network congestion and verification may occasionally add a small delay.</div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)">
-        Which tokens and networks are supported?
-        <span class="faq-icon">+</span>
-      </div>
-      <div class="faq-a">We support all major tokens including USDT, BTC, ETH, SOL, TRX, BNB, and many more across BEP20, ERC20, TRC20, SOL, and TON networks. Flash services cover 9+ wallets with 25+ token types.</div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)">
-        How do I know my funds are safe?
-        <span class="faq-icon">+</span>
-      </div>
-      <div class="faq-a">We operate with full transparency — you confirm the rate and address before any transfer. We do not hold your funds beyond the time required to execute the trade. Our team has a strong track record of safe, successful transactions.</div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)">
-        What is a Flash Service?
-        <span class="faq-icon">+</span>
-      </div>
-      <div class="faq-a">Flash services are specialized token operations performed on wallets like Trust Wallet, MetaMask, Binance Web3, and others. These appear as standard token transfers and are priced separately at ₹20/USD (bulk ₹15/USD). Contact us for full details.</div>
-    </div>
+    <div class="faq-item"><div class="faq-q">Are the rates fixed or negotiable?<span class="faq-icon">+</span></div><div class="faq-a">Rates may vary based on volume and real-time market conditions. The listed rates are indicative. For large or bulk transactions, better rates can be negotiated directly.</div></div>
+    <div class="faq-item"><div class="faq-q">Is there a minimum transaction amount?<span class="faq-icon">+</span></div><div class="faq-a">We handle transactions of all sizes. Bulk rates (&#8377;110/USD) kick in for deals exceeding $1,000 equivalent. Flash service rates apply to flash token transactions regardless of size.</div></div>
+    <div class="faq-item"><div class="faq-q">How long does a transaction take?<span class="faq-icon">+</span></div><div class="faq-a">Standard OTC deals are typically completed within a few minutes of confirmation. Flash service transactions are near-instant. Network congestion may occasionally add a small delay.</div></div>
+    <div class="faq-item"><div class="faq-q">Which tokens and networks are supported?<span class="faq-icon">+</span></div><div class="faq-a">We support USDT, BTC, ETH, SOL, TRX, BNB, and many more across BEP20, ERC20, TRC20, SOL, and TON networks. Flash services cover 9+ wallets with 25+ token types.</div></div>
+    <div class="faq-item"><div class="faq-q">How do I know my funds are safe?<span class="faq-icon">+</span></div><div class="faq-a">You confirm the rate and address before any transfer. We do not hold your funds beyond the time required to execute the trade. Our team has a strong track record of safe, successful transactions.</div></div>
+    <div class="faq-item"><div class="faq-q">What is the Free Flash Crypto Generator?<span class="faq-icon">+</span></div><div class="faq-a">The Free Flash Crypto Generator lets you generate flash crypto yourself at zero cost. Click the Flash Crypto Generator card in our Services section &mdash; no registration required, 100% free.</div></div>
   </div>
 </section>
 
@@ -1340,46 +596,21 @@
 <section id="contact">
   <div class="contact-grid">
     <div class="contact-info">
-      <div class="section-badge">◎ Contact</div>
+      <div class="section-badge">&#9678; Contact</div>
       <h3>Start Your Deal Today</h3>
       <p>Reach out through your preferred channel. We're available 24/7 and respond fast.</p>
       <div class="contact-channels">
-        <a href="https://t.me/nadcryptodesk" class="channel-link" target="_blank">
-          <div class="channel-icon">✈️</div>
-          <div>
-            <div class="channel-label">Telegram</div>
-            <div class="channel-handle">@nadcryptodesk</div>
-          </div>
-        </a>
-        <a href="https://wa.me/919204465448" class="channel-link" target="_blank">
-          <div class="channel-icon">📱</div>
-          <div>
-            <div class="channel-label">WhatsApp</div>
-            <div class="channel-handle">+91 92044 65448</div>
-          </div>
-        </a>
-        <a href="mailto:nadcryptodesk@gmail.com" class="channel-link">
-          <div class="channel-icon">📧</div>
-          <div>
-            <div class="channel-label">Email</div>
-            <div class="channel-handle">nadcryptodesk@gmail.com</div>
-          </div>
-        </a>
+        <a href="https://t.me/nadcryptodesk" class="channel-link" target="_blank"><div class="channel-icon">&#9992;</div><div><div class="channel-label">Telegram</div><div class="channel-handle">@nadcryptodesk</div></div></a>
+        <a href="https://wa.me/919204465448" class="channel-link" target="_blank"><div class="channel-icon">&#128241;</div><div><div class="channel-label">WhatsApp</div><div class="channel-handle">+91 92044 65448</div></div></a>
+        <a href="mailto:desk@nadcrypto.in" class="channel-link"><div class="channel-icon">&#128231;</div><div><div class="channel-label">Email</div><div class="channel-handle">desk@nadcrypto.in</div></div></a>
       </div>
     </div>
     <div>
-      <div class="section-badge" style="margin-bottom:24px;">◈ Quick Inquiry</div>
+      <div class="section-badge" style="margin-bottom:24px">&#10070; Quick Inquiry</div>
       <div class="contact-form" id="contactForm">
-        <div class="form-group">
-          <label class="form-label">YOUR NAME</label>
-          <input class="form-input" type="text" placeholder="Full name" id="f-name"/>
-        </div>
-        <div class="form-group">
-          <label class="form-label">CONTACT (TELEGRAM / WHATSAPP)</label>
-          <input class="form-input" type="text" placeholder="@username or +91 XXXXX" id="f-contact"/>
-        </div>
-        <div class="form-group">
-          <label class="form-label">TRANSACTION TYPE</label>
+        <div class="form-group"><label class="form-label">YOUR NAME</label><input class="form-input" type="text" placeholder="Full name" id="f-name"/></div>
+        <div class="form-group"><label class="form-label">CONTACT (TELEGRAM / WHATSAPP)</label><input class="form-input" type="text" placeholder="@username or +91 XXXXX" id="f-contact"/></div>
+        <div class="form-group"><label class="form-label">TRANSACTION TYPE</label>
           <select class="form-select" id="f-type">
             <option value="">Select service...</option>
             <option>Buy Crypto (Standard)</option>
@@ -1388,18 +619,13 @@
             <option>Flash Service</option>
           </select>
         </div>
-        <div class="form-group">
-          <label class="form-label">DETAILS / AMOUNT</label>
-          <textarea class="form-textarea" placeholder="Token, amount, network, and any specific requirements..." id="f-msg"></textarea>
-        </div>
-        <button class="form-submit" onclick="submitForm()">
-          Send Inquiry →
-        </button>
+        <div class="form-group"><label class="form-label">DETAILS / AMOUNT</label><textarea class="form-textarea" placeholder="Token, amount, network, and any specific requirements..." id="f-msg"></textarea></div>
+        <button class="form-submit" id="formSubmitBtn">Send Inquiry &rarr;</button>
       </div>
-      <div id="formSuccess" style="display:none;text-align:center;padding:40px;background:var(--card);border:1px solid var(--teal);border-radius:12px;">
-        <div style="font-size:48px;margin-bottom:16px;">✅</div>
-        <div style="font-family:var(--font-head);font-size:22px;color:#fff;margin-bottom:8px;">Inquiry Sent!</div>
-        <div style="color:var(--muted);font-size:14px;">We'll reach out to you within minutes. Stay ready.</div>
+      <div id="formSuccess" style="display:none;text-align:center;padding:40px;background:var(--card);border:1px solid var(--teal);border-radius:12px">
+        <div style="font-size:48px;margin-bottom:16px">&#9989;</div>
+        <div style="font-family:var(--font-head);font-size:22px;color:#fff;margin-bottom:8px">Inquiry Sent!</div>
+        <div style="color:var(--muted);font-size:14px">We'll reach out to you within minutes. Stay ready.</div>
       </div>
     </div>
   </div>
@@ -1412,258 +638,213 @@
       <a class="nav-logo" href="#hero">NAD<span>.</span>CRYPTO</a>
       <p>Fast, secure, and reliable OTC crypto brokerage for the Indian market. Serving individual traders and bulk clients alike.</p>
     </div>
-    <div class="footer-links">
-      <h4>Navigate</h4>
-      <ul>
-        <li><a href="#rates">Live Rates</a></li>
-        <li><a href="#how">How It Works</a></li>
-        <li><a href="#services">Services</a></li>
-        <li><a href="#about">About</a></li>
-      </ul>
-    </div>
-    <div class="footer-links">
-      <h4>Services</h4>
-      <ul>
-        <li><a href="#services">Crypto Buying</a></li>
-        <li><a href="#services">Crypto Selling</a></li>
-        <li><a href="#services">Bulk OTC</a></li>
-        <li><a href="#services">Flash Services</a></li>
-      </ul>
-    </div>
-    <div class="footer-links">
-      <h4>Contact</h4>
-      <ul>
-        <li><a href="https://t.me/nadcryptodesk" target="_blank">Telegram</a></li>
-        <li><a href="https://wa.me/919204465448" target="_blank">WhatsApp</a></li>
-        <li><a href="mailto:nadcryptodesk@gmail.com">Email</a></li>
-        <li><a href="#faq">FAQ</a></li>
-      </ul>
-    </div>
+    <div class="footer-links"><h4>Navigate</h4><ul><li><a href="#rates">Live Rates</a></li><li><a href="#how">How It Works</a></li><li><a href="#services">Services</a></li><li><a href="#about">About</a></li></ul></div>
+    <div class="footer-links"><h4>Services</h4><ul><li><a href="#services">Crypto Buying</a></li><li><a href="#services">Crypto Selling</a></li><li><a href="#services">Bulk OTC</a></li><li><a href="#services">Flash Services</a></li></ul></div>
+    <div class="footer-links"><h4>Contact</h4><ul><li><a href="https://t.me/nadcryptodesk" target="_blank">Telegram</a></li><li><a href="https://wa.me/919204465448" target="_blank">WhatsApp</a></li><li><a href="mailto:desk@nadcrypto.in">Email</a></li><li><a href="#faq">FAQ</a></li></ul></div>
   </div>
   <div class="footer-bottom">
-    <span>© 2025 <span class="teal">NAD Crypto Desk</span>. All rights reserved.</span>
-    <span style="font-family:var(--font-mono);font-size:11px;">Rates may vary · Not financial advice · OTC brokerage service</span>
+    <span>&copy; 2025 <span class="teal">NAD Crypto Desk</span>. All rights reserved.</span>
+    <span style="font-family:var(--font-mono);font-size:11px">Rates may vary &middot; Not financial advice &middot; OTC brokerage service</span>
   </div>
 </footer>
 
+<!-- FLASH POPUP -->
+<div class="flash-popup-overlay" id="flashPopupOverlay">
+  <div class="flash-popup">
+    <button class="fp-close" id="fpCloseBtn">&#10005;</button>
+    <div class="fp-badge"><span class="fp-dot"></span>FREE &middot; NO COST &middot; INSTANT</div>
+    <div class="fp-title">Flash Crypto<br><span>Generator</span> &#129668;</div>
+    <p class="fp-desc">Generate flash crypto directly &mdash; no fees, no middleman, no signup required. Works with all major wallets across multiple networks. Just hit the button and go.</p>
+    <div class="fp-features">
+      <div class="fp-feat"><div class="fp-feat-dot"></div>Supports Trust Wallet, MetaMask, Binance, Bybit &amp; more</div>
+      <div class="fp-feat"><div class="fp-feat-dot"></div>Multiple token standards &mdash; TRC20, BEP20, ERC20, SOL, TON</div>
+      <div class="fp-feat"><div class="fp-feat-dot"></div>100% free &mdash; powered by NAD Crypto Desk</div>
+      <div class="fp-feat"><div class="fp-feat-dot"></div>Instant generation, no KYC, no registration needed</div>
+    </div>
+    <a class="fp-cta" href="https://sahma.in/" target="_blank" rel="noopener noreferrer">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      Launch Flash Generator
+    </a>
+    <div class="fp-note">You'll be redirected to <a href="https://sahma.in/" target="_blank">sahma.in</a> &nbsp;&middot;&nbsp; Opens in new tab</div>
+  </div>
+</div>
+
 <script>
-/* ========== CURSOR ========== */
-const cursor = document.getElementById('cursor');
-const ring = document.getElementById('cursorRing');
-let mx = 0, my = 0, rx = 0, ry = 0;
-document.addEventListener('mousemove', e => {
-  mx = e.clientX; my = e.clientY;
-  cursor.style.transform = `translate(${mx - 6}px, ${my - 6}px)`;
-});
-function animRing() {
-  rx += (mx - rx) * 0.12;
-  ry += (my - ry) *.12;
-  ring.style.transform = `translate(${rx - 18}px, ${ry - 18}px)`;
-  requestAnimationFrame(animRing);
+// =====================================================================
+//  ALL JS — single script block, no inline onclick except mobile nav
+// =====================================================================
+
+// ── Popup ──────────────────────────────────────────────────────────────
+function openFlashPopup() {
+  document.getElementById('flashPopupOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
-animRing();
-document.querySelectorAll('a,button,.faq-q,.t-dot,.channel-link').forEach(el => {
-  el.addEventListener('mouseenter', () => { cursor.style.transform += ' scale(2)'; ring.style.opacity = '1'; });
-  el.addEventListener('mouseleave', () => { cursor.style.transform = cursor.style.transform.replace(' scale(2)', ''); ring.style.opacity = '0.5'; });
-});
-
-/* ========== NAV ========== */
-window.addEventListener('scroll', () => {
-  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
-});
-function openMobileNav() { document.getElementById('mobileNav').classList.add('open'); }
+function closeFlashPopup() {
+  document.getElementById('flashPopupOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function openMobileNav()  { document.getElementById('mobileNav').classList.add('open'); }
 function closeMobileNav() { document.getElementById('mobileNav').classList.remove('open'); }
+function toggleFaq(el) {
+  var item = el.closest('.faq-item');
+  var wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(function(i){ i.classList.remove('open'); });
+  if (!wasOpen) item.classList.add('open');
+}
+function submitForm() {
+  var name    = (document.getElementById('f-name').value    || '').trim();
+  var contact = (document.getElementById('f-contact').value || '').trim();
+  var type    = document.getElementById('f-type').value;
+  var msg     = (document.getElementById('f-msg').value     || '').trim();
+  if (!name || !contact || !type) { alert('Please fill in your name, contact, and transaction type.'); return; }
+  var txt = '\uD83D\uDD14 *New Inquiry \u2014 NAD Crypto Desk*\n\n'
+          + '\uD83D\uDC64 *Name:* ' + name + '\n'
+          + '\uD83D\uDCDE *Contact:* ' + contact + '\n'
+          + '\uD83D\uDCBC *Service:* ' + type + '\n'
+          + (msg ? '\uD83D\uDCDD *Details:* ' + msg + '\n' : '')
+          + '\n_Sent via nadcryptodesk.in_';
+  document.getElementById('contactForm').style.display = 'none';
+  document.getElementById('formSuccess').style.display = 'block';
+  setTimeout(function(){ window.open('https://wa.me/919204465448?text=' + encodeURIComponent(txt), '_blank'); }, 600);
+}
 
-/* ========== HERO CANVAS ========== */
-(function() {
-  const canvas = document.getElementById('hero-canvas');
-  const ctx = canvas.getContext('2d');
-  let W, H, nodes = [], frame = 0;
-  function resize() {
-    W = canvas.width = canvas.offsetWidth;
-    H = canvas.height = canvas.offsetHeight;
-  }
-  resize();
-  window.addEventListener('resize', resize);
+// ── Wire up everything after DOM is ready ─────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
 
-  // Create nodes
-  for (let i = 0; i < 80; i++) {
-    nodes.push({
-      x: Math.random() * W, y: Math.random() * H,
-      vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4,
-      r: Math.random() * 2 + 0.5
+  // Flash card
+  document.getElementById('flashGenCard').addEventListener('click', openFlashPopup);
+
+  // Popup close button
+  document.getElementById('fpCloseBtn').addEventListener('click', function(e){ e.stopPropagation(); closeFlashPopup(); });
+
+  // Click outside popup
+  document.getElementById('flashPopupOverlay').addEventListener('click', function(e){ if(e.target === this) closeFlashPopup(); });
+
+  // ESC
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeFlashPopup(); });
+
+  // Hamburger
+  document.getElementById('hamburgerBtn').addEventListener('click', openMobileNav);
+
+  // Form submit
+  document.getElementById('formSubmitBtn').addEventListener('click', submitForm);
+
+  // Nav previous/next testimonial
+  document.getElementById('tPrev').addEventListener('click', function(){ goTesti((tIdx - 1 + 4) % 4); });
+  document.getElementById('tNext').addEventListener('click', function(){ goTesti((tIdx + 1) % 4); });
+
+  // FAQ items
+  document.querySelectorAll('.faq-q').forEach(function(q){
+    q.addEventListener('click', function(){ toggleFaq(this); });
+  });
+
+  // Smooth anchors
+  document.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      var t = document.querySelector(a.getAttribute('href'));
+      if(t){ e.preventDefault(); t.scrollIntoView({behavior:'smooth',block:'start'}); }
     });
-  }
+  });
 
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
+  // Nav scroll shrink
+  window.addEventListener('scroll', function(){
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+  });
 
-    // Grid
-    ctx.strokeStyle = 'rgba(0,201,167,0.04)';
-    ctx.lineWidth = 1;
-    const gs = 60;
-    for (let x = 0; x < W; x += gs) {
-      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
-    }
-    for (let y = 0; y < H; y += gs) {
-      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-    }
+  // ── Custom cursor ────────────────────────────────────────────────────
+  var cur = document.getElementById('cursor');
+  var ring = document.getElementById('cursorRing');
+  var mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove', function(e){
+    mx=e.clientX; my=e.clientY;
+    cur.style.transform = 'translate('+(mx-6)+'px,'+(my-6)+'px)';
+  });
+  (function animRing(){
+    rx += (mx-rx)*.12; ry += (my-ry)*.12;
+    ring.style.transform = 'translate('+(rx-18)+'px,'+(ry-18)+'px)';
+    requestAnimationFrame(animRing);
+  })();
 
-    // Moving nodes + connections
-    nodes.forEach(n => {
-      n.x += n.vx; n.y += n.vy;
-      if (n.x < 0 || n.x > W) n.vx *= -1;
-      if (n.y < 0 || n.y > H) n.vy *= -1;
+  // ── Hero canvas ──────────────────────────────────────────────────────
+  var canvas = document.getElementById('hero-canvas');
+  var ctx = canvas.getContext('2d');
+  var W=0, H=0, nodes=[], frame=0;
+  function resizeC(){ W=canvas.width=canvas.offsetWidth; H=canvas.height=canvas.offsetHeight; }
+  resizeC();
+  window.addEventListener('resize', resizeC);
+  for(var i=0;i<80;i++) nodes.push({x:Math.random()*1200,y:Math.random()*700,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:Math.random()*2+.5});
+  function drawC(){
+    ctx.clearRect(0,0,W,H);
+    ctx.strokeStyle='rgba(0,201,167,0.04)'; ctx.lineWidth=1;
+    for(var x=0;x<W;x+=60){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(var y=0;y<H;y+=60){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    nodes.forEach(function(n){
+      n.x+=n.vx; n.y+=n.vy;
+      if(n.x<0||n.x>W) n.vx*=-1;
+      if(n.y<0||n.y>H) n.vy*=-1;
     });
-
-    for (let i = 0; i < nodes.length; i++) {
-      for (let j = i + 1; j < nodes.length; j++) {
-        const dx = nodes[i].x - nodes[j].x;
-        const dy = nodes[i].y - nodes[j].y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 130) {
-          ctx.strokeStyle = `rgba(0,201,167,${0.15 * (1 - dist / 130)})`;
-          ctx.lineWidth = 0.5;
-          ctx.beginPath();
-          ctx.moveTo(nodes[i].x, nodes[i].y);
-          ctx.lineTo(nodes[j].x, nodes[j].y);
-          ctx.stroke();
-        }
+    for(var a=0;a<nodes.length;a++){
+      for(var b=a+1;b<nodes.length;b++){
+        var dx=nodes[a].x-nodes[b].x, dy=nodes[a].y-nodes[b].y, d=Math.sqrt(dx*dx+dy*dy);
+        if(d<130){ ctx.strokeStyle='rgba(0,201,167,'+(0.15*(1-d/130))+')'; ctx.lineWidth=.5; ctx.beginPath(); ctx.moveTo(nodes[a].x,nodes[a].y); ctx.lineTo(nodes[b].x,nodes[b].y); ctx.stroke(); }
       }
     }
+    nodes.forEach(function(n){ ctx.fillStyle='rgba(0,201,167,0.7)'; ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,Math.PI*2); ctx.fill(); });
+    frame++; requestAnimationFrame(drawC);
+  }
+  drawC();
 
-    nodes.forEach(n => {
-      ctx.fillStyle = 'rgba(0,201,167,0.7)';
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-      ctx.fill();
+  // ── Scroll reveal ────────────────────────────────────────────────────
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('visible'); });
+  },{threshold:0.1});
+  document.querySelectorAll('.step,.service-card,.why-card').forEach(function(el){ obs.observe(el); });
+
+  // ── Count up ─────────────────────────────────────────────────────────
+  var counted=false;
+  new IntersectionObserver(function(entries){
+    if(entries[0].isIntersecting && !counted){
+      counted=true;
+      var el=document.getElementById('countNum'), st=null;
+      function step(ts){
+        if(!st) st=ts;
+        var p=Math.min((ts-st)/2000,1);
+        el.textContent='\u20B9'+Math.floor(p*50000000).toLocaleString('en-IN')+'+';
+        if(p<1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+  },{threshold:0.4}).observe(document.getElementById('about'));
+
+  // ── Testimonials slider ───────────────────────────────────────────────
+  var tIdx=0, cardW=0;
+  var track=document.getElementById('testiTrack');
+  var tcards=track.querySelectorAll('.testi-card');
+  var dotsEl=document.getElementById('testiDots');
+  function initT(){
+    cardW=tcards[0].offsetWidth+24;
+    dotsEl.innerHTML='';
+    tcards.forEach(function(_,i){
+      var d=document.createElement('div'); d.className='t-dot'+(i===0?' active':'');
+      d.addEventListener('click',function(){ goTesti(i); }); dotsEl.appendChild(d);
     });
-
-    // Floating numbers
-    if (frame % 120 === 0) {
-      const nums = ['₹120', '₹110', 'USDT', 'BTC', 'SOL', 'TRX', '⚡'];
-      const num = nums[Math.floor(Math.random() * nums.length)];
-      const fx = Math.random() * W;
-      const fy = Math.random() * H;
-      ctx.font = '12px JetBrains Mono, monospace';
-      ctx.fillStyle = 'rgba(0,201,167,0.12)';
-      ctx.fillText(num, fx, fy);
-    }
-
-    frame++;
-    requestAnimationFrame(draw);
   }
-  draw();
-})();
-
-/* ========== SCROLL ANIMATIONS ========== */
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-}, { threshold: 0.1 });
-document.querySelectorAll('.step,.service-card,.why-card').forEach(el => observer.observe(el));
-
-/* ========== COUNT UP ========== */
-function countUp(el, target, prefix, suffix, duration) {
-  let start = 0, startTime = null;
-  function step(ts) {
-    if (!startTime) startTime = ts;
-    const prog = Math.min((ts - startTime) / duration, 1);
-    const val = Math.floor(prog * target);
-    el.textContent = prefix + val.toLocaleString('en-IN') + suffix;
-    if (prog < 1) requestAnimationFrame(step);
+  function goTesti(idx){
+    tIdx=idx; track.style.transform='translateX(-'+(tIdx*cardW)+'px)';
+    dotsEl.querySelectorAll('.t-dot').forEach(function(d,i){ d.classList.toggle('active',i===tIdx); });
   }
-  requestAnimationFrame(step);
-}
-const countObserver = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      countUp(document.getElementById('countNum'), 50000000, '₹', '+', 2000);
-      countObserver.disconnect();
-    }
-  });
-}, { threshold: 0.4 });
-const countEl = document.getElementById('countNum');
-if (countEl) countObserver.observe(countEl.closest('section'));
+  window.addEventListener('load', initT);
+  window.addEventListener('resize', initT);
+  setInterval(function(){ goTesti((tIdx+1)%tcards.length); }, 5000);
 
-/* ========== TESTIMONIALS SLIDER ========== */
-let tIdx = 0;
-const track = document.getElementById('testiTrack');
-const cards = track.querySelectorAll('.testi-card');
-const dotsEl = document.getElementById('testiDots');
-let cardW = 0;
-function initTesti() {
-  cardW = cards[0].offsetWidth + 24;
-  dotsEl.innerHTML = '';
-  cards.forEach((_, i) => {
-    const d = document.createElement('div');
-    d.className = 't-dot' + (i === 0 ? ' active' : '');
-    d.onclick = () => goTesti(i);
-    dotsEl.appendChild(d);
-  });
-}
-function goTesti(idx) {
-  tIdx = idx;
-  track.style.transform = `translateX(-${tIdx * cardW}px)`;
-  dotsEl.querySelectorAll('.t-dot').forEach((d, i) => d.classList.toggle('active', i === tIdx));
-}
-function testiNext() { goTesti((tIdx + 1) % cards.length); }
-function testiPrev() { goTesti((tIdx - 1 + cards.length) % cards.length); }
-window.addEventListener('load', initTesti);
-window.addEventListener('resize', initTesti);
-setInterval(testiNext, 5000);
+  // ── Live rate shimmer ─────────────────────────────────────────────────
+  var rateEl=document.getElementById('ticker-usd');
+  setInterval(function(){
+    var j=(Math.random()-.5)*.4;
+    rateEl.textContent='\u20B9'+(120+j).toFixed(2);
+  },3000);
 
-/* ========== FAQ ========== */
-function toggleFaq(el) {
-  const item = el.closest('.faq-item');
-  const isOpen = item.classList.contains('open');
-  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-  if (!isOpen) item.classList.add('open');
-}
-
-/* ========== FORM SUBMIT — sends to WhatsApp ========== */
-function submitForm() {
-  const name    = document.getElementById('f-name').value.trim();
-  const contact = document.getElementById('f-contact').value.trim();
-  const type    = document.getElementById('f-type').value;
-  const msg     = document.getElementById('f-msg').value.trim();
-
-  if (!name || !contact || !type) {
-    alert('Please fill in your name, contact, and transaction type.');
-    return;
-  }
-
-  const text =
-    `🔔 *New Inquiry — NAD Crypto Desk*\n\n` +
-    `👤 *Name:* ${name}\n` +
-    `📞 *Contact:* ${contact}\n` +
-    `💼 *Service:* ${type}\n` +
-    (msg ? `📝 *Details:* ${msg}\n` : '') +
-    `\n_Sent via nadcryptodesk.in_`;
-
-  const waURL = `https://wa.me/919204465448?text=${encodeURIComponent(text)}`;
-
-  // Show success state first, then open WhatsApp
-  document.getElementById('contactForm').style.display = 'none';
-  document.getElementById('formSuccess').style.display  = 'block';
-
-  setTimeout(() => { window.open(waURL, '_blank'); }, 600);
-}
-
-/* ========== LIVE RATE SHIMMER ========== */
-const rateEl = document.getElementById('ticker-usd');
-setInterval(() => {
-  const base = 120;
-  const jitter = (Math.random() - 0.5) * 0.4;
-  rateEl.textContent = '₹' + (base + jitter).toFixed(2);
-}, 3000);
-
-/* ========== SMOOTH ANCHOR ========== */
-document.querySelectorAll('a[href^="#"]').forEach(a => {
-  a.addEventListener('click', e => {
-    const target = document.querySelector(a.getAttribute('href'));
-    if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-  });
-});
+}); // end DOMContentLoaded
 </script>
 </body>
 </html>
