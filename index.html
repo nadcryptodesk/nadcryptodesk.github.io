@@ -2,305 +2,480 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>NAD Crypto Desk — Fast. Secure. Reliable.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;600;700&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
 <style>
-  :root {
-    --bg:#040810;--bg2:#080f1a;--bg3:#0d1825;--card:#0a1220;
-    --teal:#00c9a7;--neon:#00ff88;--gold:#f4b942;--red:#ff4e6a;
-    --text:#d4e0f0;--muted:#5a7a9a;
-    --border:rgba(0,201,167,0.15);--glow:rgba(0,201,167,0.3);
-    --font-head:'Chakra Petch',sans-serif;
-    --font-body:'Outfit',sans-serif;
-    --font-mono:'JetBrains Mono',monospace;
-  }
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.6;overflow-x:hidden;cursor:none}
-  ::-webkit-scrollbar{width:4px}
-  ::-webkit-scrollbar-track{background:var(--bg)}
-  ::-webkit-scrollbar-thumb{background:var(--teal);border-radius:2px}
+:root{
+  --bg:#040810;--bg2:#080f1a;--bg3:#0d1825;--card:#0a1220;
+  --teal:#00c9a7;--neon:#00ff88;--gold:#f4b942;--red:#ff4e6a;
+  --text:#d4e0f0;--muted:#5a7a9a;
+  --border:rgba(0,201,167,.15);--glow:rgba(0,201,167,.3);
+  --font-head:'Chakra Petch',sans-serif;
+  --font-body:'Outfit',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.6;overflow-x:hidden;cursor:none}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--teal);border-radius:2px}
 
-  /* CURSOR */
-  .cursor{position:fixed;z-index:99999;width:12px;height:12px;background:var(--teal);border-radius:50%;pointer-events:none;transition:transform .15s ease;mix-blend-mode:screen;top:0;left:0}
-  .cursor-ring{position:fixed;z-index:99998;width:36px;height:36px;border:1px solid var(--teal);border-radius:50%;pointer-events:none;opacity:.5;top:0;left:0}
+/* ═══════════════════ CURSOR ═══════════════════ */
+.cursor{position:fixed;z-index:99999;width:12px;height:12px;background:var(--teal);border-radius:50%;pointer-events:none;mix-blend-mode:screen;top:0;left:0;transition:width .2s,height .2s,background .2s}
+.cursor-ring{position:fixed;z-index:99998;width:36px;height:36px;border:1px solid var(--teal);border-radius:50%;pointer-events:none;opacity:.5;top:0;left:0}
 
-  /* NAV */
-  nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:20px 60px;background:rgba(4,8,16,.7);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);transition:padding .3s}
-  nav.scrolled{padding:14px 60px}
-  .nav-logo{font-family:var(--font-head);font-size:22px;font-weight:700;color:#fff;letter-spacing:2px;text-decoration:none}
-  .nav-logo span{color:var(--teal)}
-  .nav-links{display:flex;gap:36px;list-style:none}
-  .nav-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;transition:color .3s;position:relative}
-  .nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--teal);transition:width .3s}
-  .nav-links a:hover{color:var(--teal)}
-  .nav-links a:hover::after{width:100%}
-  .nav-cta{background:var(--teal);color:#000;padding:10px 24px;border-radius:4px;font-family:var(--font-head);font-weight:700;font-size:13px;letter-spacing:1px;text-decoration:none;text-transform:uppercase;transition:all .3s;box-shadow:0 0 20px var(--glow)}
-  .nav-cta:hover{background:var(--neon);box-shadow:0 0 40px rgba(0,255,136,.5);transform:translateY(-1px)}
-  .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer}
-  .hamburger span{display:block;width:24px;height:2px;background:var(--teal);transition:all .3s}
+/* ═══════════════════ AUTH GATE ═══════════════════ */
+#authGate{
+  position:fixed;inset:0;z-index:8000;
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;overflow-y:auto;
+}
+#authGate canvas{position:absolute;inset:0;z-index:0}
+.auth-card{
+  position:relative;z-index:1;
+  background:var(--bg2);
+  border:1px solid rgba(0,201,167,.3);
+  border-radius:24px;
+  width:100%;max-width:460px;
+  padding:44px 40px;
+  box-shadow:0 40px 100px rgba(0,0,0,.7),0 0 60px rgba(0,201,167,.07);
+  animation:cardIn .5s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes cardIn{from{opacity:0;transform:scale(.9) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.auth-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:24px 24px 0 0;background:linear-gradient(90deg,transparent,var(--teal),transparent)}
+.auth-logo{font-family:var(--font-head);font-size:26px;font-weight:700;color:#fff;letter-spacing:2px;text-align:center;margin-bottom:6px}
+.auth-logo span{color:var(--teal)}
+.auth-tagline{text-align:center;font-size:13px;color:var(--muted);font-family:var(--font-mono);letter-spacing:1px;margin-bottom:32px}
+.auth-tabs{display:flex;background:var(--bg3);border-radius:10px;padding:4px;margin-bottom:32px;gap:4px}
+.auth-tab{flex:1;padding:10px;border:none;background:transparent;color:var(--muted);font-family:var(--font-head);font-size:13px;font-weight:600;letter-spacing:1px;text-transform:uppercase;border-radius:7px;cursor:pointer;transition:all .3s}
+.auth-tab.active{background:var(--teal);color:#000;box-shadow:0 0 20px rgba(0,201,167,.4)}
+.auth-form{display:flex;flex-direction:column;gap:16px}
+.auth-form-group{display:flex;flex-direction:column;gap:6px}
+.auth-label{font-size:11px;color:var(--muted);font-family:var(--font-mono);letter-spacing:1.5px;text-transform:uppercase}
+.auth-input{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:13px 16px;color:var(--text);font-family:var(--font-body);font-size:15px;outline:none;transition:border-color .3s,box-shadow .3s;width:100%}
+.auth-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,201,167,.1)}
+.auth-input::placeholder{color:var(--muted)}
+.auth-btn{background:var(--teal);color:#000;border:none;padding:15px;border-radius:8px;font-family:var(--font-head);font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .3s;box-shadow:0 0 20px rgba(0,201,167,.3);display:flex;align-items:center;justify-content:center;gap:8px}
+.auth-btn:hover{background:var(--neon);box-shadow:0 0 40px rgba(0,255,136,.5);transform:translateY(-1px)}
+.auth-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.auth-divider{display:flex;align-items:center;gap:12px;margin:4px 0}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.auth-divider span{font-size:11px;color:var(--muted);font-family:var(--font-mono)}
+.auth-google-btn{background:transparent;border:1px solid var(--border);color:var(--text);padding:13px;border-radius:8px;font-family:var(--font-body);font-size:14px;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:10px;width:100%}
+.auth-google-btn:hover{border-color:var(--teal);color:var(--teal);background:rgba(0,201,167,.05)}
+.auth-error{background:rgba(255,78,106,.1);border:1px solid rgba(255,78,106,.3);color:var(--red);padding:10px 14px;border-radius:8px;font-size:13px;font-family:var(--font-mono);display:none}
+.auth-error.show{display:block}
+.auth-success{background:rgba(0,201,167,.1);border:1px solid rgba(0,201,167,.3);color:var(--teal);padding:10px 14px;border-radius:8px;font-size:13px;font-family:var(--font-mono);display:none}
+.auth-success.show{display:block}
+.auth-preview-hint{margin-top:20px;text-align:center;font-size:12px;color:var(--muted)}
+.auth-preview-hint span{color:var(--teal);cursor:pointer;text-decoration:underline;font-family:var(--font-mono)}
+.auth-preview-hint span:hover{color:var(--neon)}
 
-  /* MOBILE NAV */
-  .mobile-nav{display:none;position:fixed;inset:0;z-index:900;background:rgba(4,8,16,.97);backdrop-filter:blur(20px);flex-direction:column;align-items:center;justify-content:center;gap:40px}
-  .mobile-nav.open{display:flex}
-  .mobile-nav a{font-family:var(--font-head);font-size:32px;font-weight:700;color:var(--muted);text-decoration:none;transition:color .3s}
-  .mobile-nav a:hover{color:var(--teal)}
-  .mobile-close{position:absolute;top:24px;right:30px;font-size:32px;color:var(--muted);cursor:pointer;background:none;border:none;font-family:var(--font-head)}
+/* LIMITED PREVIEW BANNER */
+#previewBanner{
+  position:fixed;top:0;left:0;right:0;z-index:5000;
+  background:linear-gradient(90deg,rgba(244,185,66,.15),rgba(0,201,167,.15));
+  border-bottom:1px solid rgba(244,185,66,.3);
+  padding:12px 24px;
+  display:none;align-items:center;justify-content:space-between;gap:16px;
+  backdrop-filter:blur(10px);
+}
+#previewBanner.show{display:flex}
+.preview-banner-text{font-size:13px;color:var(--gold);font-family:var(--font-mono);display:flex;align-items:center;gap:8px}
+.preview-banner-btns{display:flex;gap:8px}
+.pbb-login{background:var(--teal);color:#000;border:none;padding:7px 18px;border-radius:6px;font-family:var(--font-head);font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .3s}
+.pbb-login:hover{background:var(--neon)}
 
-  /* HERO */
-  #hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden;padding:120px 60px 80px}
-  #hero-canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0}
-  .hero-content{position:relative;z-index:2;max-width:700px}
-  .hero-badge{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);padding:6px 16px;border-radius:100px;font-size:12px;font-family:var(--font-mono);color:var(--teal);margin-bottom:32px;background:rgba(0,201,167,.05);animation:fadeUp .8s ease both}
-  .badge-dot{width:6px;height:6px;background:var(--neon);border-radius:50%;animation:pulse 2s infinite}
-  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
-  .hero-title{font-family:var(--font-head);font-size:clamp(44px,7vw,82px);font-weight:700;line-height:1.05;color:#fff;margin-bottom:24px;animation:fadeUp .8s .1s ease both}
-  .hero-title .accent{color:var(--teal)}
-  .hero-title .glow-text{text-shadow:0 0 40px rgba(0,201,167,.6)}
-  .hero-sub{font-size:18px;color:var(--muted);max-width:520px;margin-bottom:48px;line-height:1.7;animation:fadeUp .8s .2s ease both}
-  .hero-btns{display:flex;gap:16px;flex-wrap:wrap;animation:fadeUp .8s .3s ease both}
-  .btn-primary{display:inline-flex;align-items:center;gap:10px;background:var(--teal);color:#000;padding:16px 32px;border-radius:6px;font-family:var(--font-head);font-weight:700;font-size:14px;letter-spacing:1.5px;text-decoration:none;text-transform:uppercase;transition:all .3s;box-shadow:0 0 30px var(--glow)}
-  .btn-primary:hover{background:var(--neon);box-shadow:0 0 60px rgba(0,255,136,.6);transform:translateY(-2px)}
-  .btn-secondary{display:inline-flex;align-items:center;gap:10px;background:transparent;color:var(--text);padding:16px 32px;border-radius:6px;border:1px solid var(--border);font-family:var(--font-head);font-weight:600;font-size:14px;letter-spacing:1.5px;text-decoration:none;text-transform:uppercase;transition:all .3s}
-  .btn-secondary:hover{border-color:var(--teal);color:var(--teal);box-shadow:0 0 20px var(--glow);transform:translateY(-2px)}
-  .hero-stats{position:relative;z-index:2;margin-left:auto;display:flex;flex-direction:column;gap:20px;animation:fadeLeft .8s .4s ease both}
-  .stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px 32px;min-width:200px;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s}
-  .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--teal),transparent)}
-  .stat-card:hover{transform:translateX(-4px);box-shadow:0 0 30px var(--glow)}
-  .stat-val{font-family:var(--font-mono);font-size:32px;font-weight:600;color:var(--teal)}
-  .stat-label{font-size:13px;color:var(--muted);margin-top:4px}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-  @keyframes fadeLeft{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+/* LOCKED OVERLAY on sections */
+.section-locked{position:relative;overflow:hidden}
+.section-locked::after{
+  content:'🔒 Login to unlock full access';
+  position:absolute;inset:0;z-index:10;
+  background:linear-gradient(180deg,transparent 0%,rgba(4,8,16,.95) 40%);
+  display:flex;align-items:flex-end;justify-content:center;
+  padding-bottom:40px;
+  font-family:var(--font-head);font-size:16px;color:var(--muted);
+  letter-spacing:1px;pointer-events:none;
+}
 
-  /* TICKER */
-  .ticker-wrap{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;padding:14px 0}
-  .ticker{display:flex;gap:60px;animation:ticker 30s linear infinite;white-space:nowrap}
-  .ticker-item{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:13px;color:var(--muted);flex-shrink:0}
-  .ticker-item .t-name{color:var(--text);font-weight:600}
-  .ticker-item .t-up{color:var(--neon)}
-  .ticker-item .t-down{color:var(--red)}
-  @keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+/* ═══════════════════ NAV ═══════════════════ */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:20px 60px;background:rgba(4,8,16,.7);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);transition:padding .3s}
+nav.scrolled{padding:14px 60px}
+.nav-logo{font-family:var(--font-head);font-size:22px;font-weight:700;color:#fff;letter-spacing:2px;text-decoration:none}
+.nav-logo span{color:var(--teal)}
+.nav-links{display:flex;gap:36px;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;transition:color .3s;position:relative}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--teal);transition:width .3s}
+.nav-links a:hover{color:var(--teal)}
+.nav-links a:hover::after{width:100%}
+.nav-right{display:flex;align-items:center;gap:16px}
+.nav-cta{background:var(--teal);color:#000;padding:10px 24px;border-radius:4px;font-family:var(--font-head);font-weight:700;font-size:13px;letter-spacing:1px;text-decoration:none;text-transform:uppercase;transition:all .3s;box-shadow:0 0 20px var(--glow);border:none;cursor:pointer}
+.nav-cta:hover{background:var(--neon);box-shadow:0 0 40px rgba(0,255,136,.5)}
+/* User avatar in nav */
+.nav-user{display:none;align-items:center;gap:12px}
+.nav-user.show{display:flex}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--neon));display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:14px;font-weight:700;color:#000;border:2px solid rgba(0,201,167,.4);cursor:pointer;position:relative}
+.user-avatar:hover .user-dropdown{display:flex}
+.user-dropdown{display:none;position:absolute;top:calc(100% + 10px);right:0;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:8px;min-width:200px;flex-direction:column;gap:4px;box-shadow:0 20px 40px rgba(0,0,0,.5)}
+.user-email{padding:10px 14px;font-size:12px;color:var(--muted);font-family:var(--font-mono);border-bottom:1px solid var(--border);margin-bottom:4px}
+.user-menu-item{padding:10px 14px;border-radius:8px;font-size:14px;color:var(--text);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px;border:none;background:transparent;font-family:var(--font-body);width:100%;text-align:left}
+.user-menu-item:hover{background:rgba(0,201,167,.1);color:var(--teal)}
+.user-menu-item.logout:hover{background:rgba(255,78,106,.1);color:var(--red)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer}
+.hamburger span{display:block;width:24px;height:2px;background:var(--teal);transition:all .3s}
+/* Mobile nav */
+.mobile-nav{display:none;position:fixed;inset:0;z-index:900;background:rgba(4,8,16,.97);backdrop-filter:blur(20px);flex-direction:column;align-items:center;justify-content:center;gap:40px}
+.mobile-nav.open{display:flex}
+.mobile-nav a{font-family:var(--font-head);font-size:32px;font-weight:700;color:var(--muted);text-decoration:none;transition:color .3s}
+.mobile-nav a:hover{color:var(--teal)}
+.mobile-close{position:absolute;top:24px;right:30px;font-size:32px;color:var(--muted);cursor:pointer;background:none;border:none;font-family:var(--font-head)}
 
-  /* SECTIONS */
-  section{padding:100px 60px}
-  .section-badge{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);padding:6px 16px;border-radius:100px;font-size:11px;font-family:var(--font-mono);color:var(--teal);margin-bottom:20px;background:rgba(0,201,167,.05);letter-spacing:2px;text-transform:uppercase}
-  .section-title{font-family:var(--font-head);font-size:clamp(32px,5vw,56px);font-weight:700;color:#fff;line-height:1.1;margin-bottom:16px}
-  .section-sub{font-size:17px;color:var(--muted);max-width:560px;line-height:1.7}
-  .section-header{margin-bottom:60px}
-  .text-center{text-align:center}
-  .text-center .section-sub{margin:0 auto}
-  .u-line{position:relative;display:inline-block}
-  .u-line::after{content:'';position:absolute;left:0;bottom:-6px;width:60px;height:3px;background:var(--teal);border-radius:2px;box-shadow:0 0 12px var(--glow)}
-  .divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:0 60px}
+/* ═══════════════════ HERO ═══════════════════ */
+#hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden;padding:120px 60px 80px}
+#hero-canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0}
+.hero-content{position:relative;z-index:2;max-width:700px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);padding:6px 16px;border-radius:100px;font-size:12px;font-family:var(--font-mono);color:var(--teal);margin-bottom:32px;background:rgba(0,201,167,.05);animation:fadeUp .8s ease both}
+.badge-dot{width:6px;height:6px;background:var(--neon);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+.hero-title{font-family:var(--font-head);font-size:clamp(44px,7vw,82px);font-weight:700;line-height:1.05;color:#fff;margin-bottom:24px;animation:fadeUp .8s .1s ease both}
+.hero-title .accent{color:var(--teal)}
+.hero-title .glow-text{text-shadow:0 0 40px rgba(0,201,167,.6)}
+.hero-sub{font-size:18px;color:var(--muted);max-width:520px;margin-bottom:48px;line-height:1.7;animation:fadeUp .8s .2s ease both}
+.hero-btns{display:flex;gap:16px;flex-wrap:wrap;animation:fadeUp .8s .3s ease both}
+.btn-primary{display:inline-flex;align-items:center;gap:10px;background:var(--teal);color:#000;padding:16px 32px;border-radius:6px;font-family:var(--font-head);font-weight:700;font-size:14px;letter-spacing:1.5px;text-decoration:none;text-transform:uppercase;transition:all .3s;box-shadow:0 0 30px var(--glow);border:none;cursor:pointer}
+.btn-primary:hover{background:var(--neon);box-shadow:0 0 60px rgba(0,255,136,.6);transform:translateY(-2px)}
+.btn-secondary{display:inline-flex;align-items:center;gap:10px;background:transparent;color:var(--text);padding:16px 32px;border-radius:6px;border:1px solid var(--border);font-family:var(--font-head);font-weight:600;font-size:14px;letter-spacing:1.5px;text-decoration:none;text-transform:uppercase;transition:all .3s;cursor:pointer}
+.btn-secondary:hover{border-color:var(--teal);color:var(--teal);box-shadow:0 0 20px var(--glow);transform:translateY(-2px)}
+.hero-stats{position:relative;z-index:2;margin-left:auto;display:flex;flex-direction:column;gap:20px;animation:fadeLeft .8s .4s ease both}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px 32px;min-width:200px;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--teal),transparent)}
+.stat-card:hover{transform:translateX(-4px);box-shadow:0 0 30px var(--glow)}
+.stat-val{font-family:var(--font-mono);font-size:32px;font-weight:600;color:var(--teal)}
+.stat-label{font-size:13px;color:var(--muted);margin-top:4px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeLeft{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
 
-  /* RATES */
-  #rates{background:var(--bg2)}
-  .rates-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin-bottom:40px}
-  .rate-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;position:relative;overflow:hidden;transition:all .4s}
-  .rate-card:hover{border-color:var(--teal);transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,.4),0 0 30px var(--glow)}
-  .rc-label{font-size:11px;letter-spacing:3px;color:var(--muted);font-family:var(--font-mono);text-transform:uppercase;margin-bottom:12px}
-  .rc-pair{font-family:var(--font-head);font-size:20px;font-weight:700;color:#fff;margin-bottom:24px}
-  .rc-val{font-family:var(--font-mono);font-size:40px;font-weight:600;color:var(--teal);line-height:1}
-  .rc-unit{font-size:16px;color:var(--muted)}
-  .rc-badge{position:absolute;top:20px;right:20px;padding:4px 12px;border-radius:100px;font-size:11px;font-family:var(--font-mono);font-weight:600;letter-spacing:1px;background:rgba(0,255,136,.1);color:var(--neon);border:1px solid rgba(0,255,136,.3)}
-  .rate-note{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:20px 28px;display:flex;align-items:center;gap:16px;font-size:14px;color:var(--muted)}
-  .rate-note strong{color:var(--gold)}
+/* ═══════════════════ TICKER ═══════════════════ */
+.ticker-wrap{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;padding:14px 0}
+.ticker{display:flex;gap:60px;animation:ticker 30s linear infinite;white-space:nowrap}
+.ticker-item{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:13px;color:var(--muted);flex-shrink:0}
+.ticker-item .t-name{color:var(--text);font-weight:600}
+.ticker-item .t-up{color:var(--neon)}
+.ticker-item .t-down{color:var(--red)}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
-  /* HOW IT WORKS */
-  .steps-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));position:relative}
-  .steps-row::before{content:'';position:absolute;top:44px;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--teal),transparent);z-index:0}
-  .step{display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 20px;position:relative;z-index:1;opacity:0;transform:translateY(20px);transition:opacity .5s,transform .5s}
-  .step.visible{opacity:1;transform:translateY(0)}
-  .step-num{width:88px;height:88px;border-radius:50%;background:var(--card);border:2px solid var(--teal);display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:28px;font-weight:700;color:var(--teal);margin-bottom:24px;box-shadow:0 0 30px var(--glow);transition:all .3s}
-  .step:hover .step-num{background:var(--teal);color:#000;box-shadow:0 0 60px rgba(0,201,167,.6);transform:scale(1.1)}
-  .step-title{font-family:var(--font-head);font-size:18px;font-weight:600;color:#fff;margin-bottom:12px}
-  .step-desc{font-size:14px;color:var(--muted);line-height:1.7}
+/* ═══════════════════ SECTIONS ═══════════════════ */
+section{padding:100px 60px}
+.section-badge{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);padding:6px 16px;border-radius:100px;font-size:11px;font-family:var(--font-mono);color:var(--teal);margin-bottom:20px;background:rgba(0,201,167,.05);letter-spacing:2px;text-transform:uppercase}
+.section-title{font-family:var(--font-head);font-size:clamp(32px,5vw,56px);font-weight:700;color:#fff;line-height:1.1;margin-bottom:16px}
+.section-sub{font-size:17px;color:var(--muted);max-width:560px;line-height:1.7}
+.section-header{margin-bottom:60px}
+.text-center{text-align:center}
+.text-center .section-sub{margin:0 auto}
+.u-line{position:relative;display:inline-block}
+.u-line::after{content:'';position:absolute;left:0;bottom:-6px;width:60px;height:3px;background:var(--teal);border-radius:2px;box-shadow:0 0 12px var(--glow)}
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:0 60px}
 
-  /* SERVICES */
-  #services{background:var(--bg2)}
-  .services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}
-  .service-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:36px 32px;position:relative;overflow:hidden;opacity:0;transform:translateY(20px);transition:opacity .5s,transform .5s,border-color .4s,box-shadow .4s}
-  .service-card.visible{opacity:1;transform:translateY(0)}
-  .service-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--teal),transparent);transform:scaleX(0);transition:transform .4s}
-  .service-card:hover::before{transform:scaleX(1)}
-  .service-card:hover{border-color:rgba(0,201,167,.4);box-shadow:0 20px 60px rgba(0,0,0,.3)}
-  .svc-icon{width:56px;height:56px;background:rgba(0,201,167,.1);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:24px;font-size:24px;transition:all .3s}
-  .service-card:hover .svc-icon{background:var(--teal);border-color:var(--teal)}
-  .svc-title{font-family:var(--font-head);font-size:20px;font-weight:700;color:#fff;margin-bottom:12px}
-  .svc-desc{font-size:14px;color:var(--muted);line-height:1.7}
+/* ═══════════════════ ABOUT/PREVIEW (public) ═══════════════════ */
+#about-preview{background:var(--bg2)}
+.preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.preview-cards{display:flex;flex-direction:column;gap:16px}
+.preview-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;display:flex;gap:18px;align-items:flex-start;transition:all .3s}
+.preview-card:hover{border-color:var(--teal);transform:translateX(4px)}
+.pc-icon{width:48px;height:48px;border-radius:12px;background:rgba(0,201,167,.1);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.pc-title{font-family:var(--font-head);font-size:16px;font-weight:700;color:#fff;margin-bottom:6px}
+.pc-desc{font-size:13px;color:var(--muted);line-height:1.6}
 
-  /* FLASH GEN CARD */
-  .service-card--flash-gen{border-color:rgba(0,255,136,.25)!important;background:linear-gradient(135deg,#0a1220 60%,rgba(0,255,136,.05));cursor:pointer}
-  .service-card--flash-gen::before{background:linear-gradient(90deg,transparent,var(--neon),transparent)!important}
-  .service-card--flash-gen:hover{border-color:var(--neon)!important;box-shadow:0 20px 60px rgba(0,255,136,.15)!important;transform:translateY(-6px)!important}
-  .service-card--flash-gen .svc-icon{background:rgba(0,255,136,.1)!important;border-color:rgba(0,255,136,.3)!important}
-  .service-card--flash-gen:hover .svc-icon{background:var(--neon)!important;border-color:var(--neon)!important}
-  .free-badge-pill{position:absolute;top:18px;right:18px;background:rgba(0,255,136,.12);border:1px solid rgba(0,255,136,.4);color:var(--neon);font-family:var(--font-mono);font-size:11px;font-weight:700;padding:4px 12px;border-radius:100px;letter-spacing:1px;animation:pulseBadge 2s infinite}
-  @keyframes pulseBadge{0%,100%{box-shadow:0 0 0 0 rgba(0,255,136,.3)}50%{box-shadow:0 0 0 8px rgba(0,255,136,0)}}
-  .svc-launch-btn{display:inline-flex;align-items:center;gap:8px;margin-top:20px;background:var(--neon);color:#000;padding:10px 20px;border-radius:6px;font-family:var(--font-head);font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;box-shadow:0 0 20px rgba(0,255,136,.3);transition:all .3s;pointer-events:none}
-  .service-card--flash-gen:hover .svc-launch-btn{box-shadow:0 0 40px rgba(0,255,136,.6);transform:scale(1.04)}
+/* ═══════════════════ RATES ═══════════════════ */
+#rates{background:var(--bg2)}
+.rates-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin-bottom:40px}
+.rate-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;position:relative;overflow:hidden;transition:all .4s}
+.rate-card:hover{border-color:var(--teal);transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,.4),0 0 30px var(--glow)}
+.rc-label{font-size:11px;letter-spacing:3px;color:var(--muted);font-family:var(--font-mono);text-transform:uppercase;margin-bottom:12px}
+.rc-pair{font-family:var(--font-head);font-size:20px;font-weight:700;color:#fff;margin-bottom:24px}
+.rc-val{font-family:var(--font-mono);font-size:40px;font-weight:600;color:var(--teal);line-height:1}
+.rc-unit{font-size:16px;color:var(--muted)}
+.rc-badge{position:absolute;top:20px;right:20px;padding:4px 12px;border-radius:100px;font-size:11px;font-family:var(--font-mono);font-weight:600;letter-spacing:1px;background:rgba(0,255,136,.1);color:var(--neon);border:1px solid rgba(0,255,136,.3)}
+.rate-note{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:20px 28px;display:flex;align-items:center;gap:16px;font-size:14px;color:var(--muted)}
+.rate-note strong{color:var(--gold)}
 
-  /* AIRDROPS CARD */
-  .service-card--soon{border-color:rgba(244,185,66,.2)!important;background:linear-gradient(135deg,#0a1220 60%,rgba(244,185,66,.03))}
-  .service-card--soon::before{background:linear-gradient(90deg,transparent,var(--gold),transparent)!important}
-  .service-card--soon:hover{border-color:var(--gold)!important;box-shadow:0 20px 60px rgba(244,185,66,.12)!important}
-  .service-card--soon .svc-icon{background:rgba(244,185,66,.1)!important;border-color:rgba(244,185,66,.3)!important}
-  .service-card--soon:hover .svc-icon{background:var(--gold)!important;border-color:var(--gold)!important}
-  .soon-badge-pill{position:absolute;top:18px;right:18px;background:rgba(244,185,66,.1);border:1px solid rgba(244,185,66,.35);color:var(--gold);font-family:var(--font-mono);font-size:11px;font-weight:700;padding:4px 12px;border-radius:100px;letter-spacing:1px}
-  .soon-bar{margin-top:20px;height:4px;background:rgba(244,185,66,.1);border-radius:2px;overflow:hidden}
-  .soon-bar-fill{height:100%;width:65%;background:linear-gradient(90deg,var(--gold),#ffdc80);border-radius:2px;animation:barPulse 2.5s ease-in-out infinite}
-  @keyframes barPulse{0%,100%{width:62%}50%{width:72%}}
-  .soon-hint{margin-top:10px;font-size:12px;color:var(--gold);font-family:var(--font-mono);opacity:.7;transition:opacity .3s}
-  .service-card--soon:hover .soon-hint{opacity:1}
+/* ═══════════════════ HOW IT WORKS ═══════════════════ */
+.steps-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));position:relative}
+.steps-row::before{content:'';position:absolute;top:44px;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--teal),transparent);z-index:0}
+.step{display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 20px;position:relative;z-index:1;opacity:0;transform:translateY(20px);transition:opacity .5s,transform .5s}
+.step.visible{opacity:1;transform:translateY(0)}
+.step-num{width:88px;height:88px;border-radius:50%;background:var(--card);border:2px solid var(--teal);display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:28px;font-weight:700;color:var(--teal);margin-bottom:24px;box-shadow:0 0 30px var(--glow);transition:all .3s}
+.step:hover .step-num{background:var(--teal);color:#000;transform:scale(1.1)}
+.step-title{font-family:var(--font-head);font-size:18px;font-weight:600;color:#fff;margin-bottom:12px}
+.step-desc{font-size:14px;color:var(--muted);line-height:1.7}
 
-  /* FLASH POPUP */
-  .flash-popup-overlay{display:none;position:fixed;inset:0;z-index:9000;background:rgba(4,8,16,.88);backdrop-filter:blur(16px);align-items:center;justify-content:center;padding:24px}
-  .flash-popup-overlay.open{display:flex}
-  .flash-popup{background:var(--bg2);border:1px solid rgba(0,255,136,.3);border-radius:24px;max-width:560px;width:100%;padding:48px 44px;position:relative;box-shadow:0 40px 120px rgba(0,0,0,.6),0 0 60px rgba(0,255,136,.08);animation:popupIn .4s cubic-bezier(.34,1.56,.64,1) both;overflow:hidden}
-  @keyframes popupIn{from{opacity:0;transform:scale(.88) translateY(30px)}to{opacity:1;transform:scale(1) translateY(0)}}
-  .flash-popup::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--neon),transparent)}
-  .flash-popup::after{content:'FLASH';position:absolute;bottom:-10px;right:20px;font-family:var(--font-head);font-size:100px;font-weight:700;opacity:.03;pointer-events:none;line-height:1;color:var(--neon)}
-  .fp-close{position:absolute;top:18px;right:20px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--muted);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:all .3s;line-height:1}
-  .fp-close:hover{background:rgba(255,78,106,.1);border-color:var(--red);color:var(--red)}
-  .fp-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.3);color:var(--neon);padding:5px 14px;border-radius:100px;font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:2px;margin-bottom:20px}
-  .fp-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--neon);animation:pulse 2s infinite}
-  .fp-title{font-family:var(--font-head);font-size:32px;font-weight:700;color:#fff;line-height:1.15;margin-bottom:14px}
-  .fp-title span{color:var(--neon)}
-  .fp-desc{font-size:15px;color:var(--muted);line-height:1.75;margin-bottom:32px}
-  .fp-features{display:flex;flex-direction:column;gap:12px;margin-bottom:36px}
-  .fp-feat{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;font-size:14px;color:var(--text)}
-  .fp-feat-dot{width:8px;height:8px;border-radius:50%;background:var(--neon);box-shadow:0 0 8px rgba(0,255,136,.5);flex-shrink:0}
-  .fp-cta{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;background:var(--neon);color:#000;padding:18px 32px;border-radius:10px;font-family:var(--font-head);font-size:15px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;box-shadow:0 0 30px rgba(0,255,136,.4);transition:all .3s;border:none}
-  .fp-cta:hover{background:#00ffaa;box-shadow:0 0 60px rgba(0,255,136,.7);transform:translateY(-2px)}
-  .fp-note{text-align:center;margin-top:16px;font-size:12px;color:var(--muted);font-family:var(--font-mono)}
-  .fp-note a{color:var(--teal);text-decoration:none}
-  .fp-note a:hover{color:var(--neon)}
+/* ═══════════════════ SERVICES ═══════════════════ */
+#services{background:var(--bg2)}
+.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}
+.service-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:36px 32px;position:relative;overflow:hidden;opacity:0;transform:translateY(20px);transition:opacity .5s,transform .5s,border-color .4s,box-shadow .4s}
+.service-card.visible{opacity:1;transform:translateY(0)}
+.service-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--teal),transparent);transform:scaleX(0);transition:transform .4s}
+.service-card:hover::before{transform:scaleX(1)}
+.service-card:hover{border-color:rgba(0,201,167,.4);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.svc-icon{width:56px;height:56px;background:rgba(0,201,167,.1);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:24px;font-size:24px;transition:all .3s}
+.service-card:hover .svc-icon{background:var(--teal);border-color:var(--teal)}
+.svc-title{font-family:var(--font-head);font-size:20px;font-weight:700;color:#fff;margin-bottom:12px}
+.svc-desc{font-size:14px;color:var(--muted);line-height:1.7}
+/* Flash gen card */
+.service-card--flash-gen{border-color:rgba(0,255,136,.25)!important;background:linear-gradient(135deg,#0a1220 60%,rgba(0,255,136,.05));cursor:pointer}
+.service-card--flash-gen::before{background:linear-gradient(90deg,transparent,var(--neon),transparent)!important}
+.service-card--flash-gen:hover{border-color:var(--neon)!important;box-shadow:0 20px 60px rgba(0,255,136,.15)!important;transform:translateY(-6px)!important}
+.service-card--flash-gen .svc-icon{background:rgba(0,255,136,.1)!important;border-color:rgba(0,255,136,.3)!important}
+.service-card--flash-gen:hover .svc-icon{background:var(--neon)!important;border-color:var(--neon)!important}
+.free-badge-pill{position:absolute;top:18px;right:18px;background:rgba(0,255,136,.12);border:1px solid rgba(0,255,136,.4);color:var(--neon);font-family:var(--font-mono);font-size:11px;font-weight:700;padding:4px 12px;border-radius:100px;letter-spacing:1px;animation:pulseBadge 2s infinite}
+@keyframes pulseBadge{0%,100%{box-shadow:0 0 0 0 rgba(0,255,136,.3)}50%{box-shadow:0 0 0 8px rgba(0,255,136,0)}}
+.svc-launch-btn{display:inline-flex;align-items:center;gap:8px;margin-top:20px;background:var(--neon);color:#000;padding:10px 20px;border-radius:6px;font-family:var(--font-head);font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;box-shadow:0 0 20px rgba(0,255,136,.3);transition:all .3s;pointer-events:none}
+.service-card--flash-gen:hover .svc-launch-btn{box-shadow:0 0 40px rgba(0,255,136,.6);transform:scale(1.04)}
+/* Airdrops */
+.service-card--soon{border-color:rgba(244,185,66,.2)!important;background:linear-gradient(135deg,#0a1220 60%,rgba(244,185,66,.03))}
+.service-card--soon::before{background:linear-gradient(90deg,transparent,var(--gold),transparent)!important}
+.service-card--soon:hover{border-color:var(--gold)!important;box-shadow:0 20px 60px rgba(244,185,66,.12)!important}
+.service-card--soon .svc-icon{background:rgba(244,185,66,.1)!important;border-color:rgba(244,185,66,.3)!important}
+.service-card--soon:hover .svc-icon{background:var(--gold)!important;border-color:var(--gold)!important}
+.soon-badge-pill{position:absolute;top:18px;right:18px;background:rgba(244,185,66,.1);border:1px solid rgba(244,185,66,.35);color:var(--gold);font-family:var(--font-mono);font-size:11px;font-weight:700;padding:4px 12px;border-radius:100px;letter-spacing:1px}
+.soon-bar{margin-top:20px;height:4px;background:rgba(244,185,66,.1);border-radius:2px;overflow:hidden}
+.soon-bar-fill{height:100%;width:65%;background:linear-gradient(90deg,var(--gold),#ffdc80);border-radius:2px;animation:barPulse 2.5s ease-in-out infinite}
+@keyframes barPulse{0%,100%{width:62%}50%{width:72%}}
+.soon-hint{margin-top:10px;font-size:12px;color:var(--gold);font-family:var(--font-mono);opacity:.7;transition:opacity .3s}
+.service-card--soon:hover .soon-hint{opacity:1}
 
-  /* FLASH WALLETS */
-  .flash-section{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:48px;margin-top:40px;position:relative;overflow:hidden}
-  .flash-title{font-family:var(--font-head);font-size:24px;font-weight:700;color:var(--gold);margin-bottom:8px}
-  .flash-sub{font-size:14px;color:var(--muted);margin-bottom:32px}
-  .flash-price-row{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:32px}
-  .flash-price-chip{background:rgba(244,185,66,.1);border:1px solid rgba(244,185,66,.3);border-radius:8px;padding:12px 20px;font-family:var(--font-mono)}
-  .fpc-val{color:var(--gold);font-size:22px;font-weight:600}
-  .fpc-label{color:var(--muted);font-size:11px}
-  .flash-wallets{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
-  .wallet-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px;transition:all .3s}
-  .wallet-item:hover{border-color:var(--gold);box-shadow:0 0 20px rgba(244,185,66,.15)}
-  .wallet-name{font-size:13px;font-weight:600;color:#fff;margin-bottom:6px}
-  .wallet-tokens{font-size:11px;color:var(--muted);font-family:var(--font-mono);line-height:1.6}
+/* ═══════════════════ FLASH POPUP ═══════════════════ */
+.flash-popup-overlay{display:none;position:fixed;inset:0;z-index:9000;background:rgba(4,8,16,.88);backdrop-filter:blur(16px);align-items:center;justify-content:center;padding:24px}
+.flash-popup-overlay.open{display:flex}
+.flash-popup{background:var(--bg2);border:1px solid rgba(0,255,136,.3);border-radius:24px;max-width:560px;width:100%;padding:48px 44px;position:relative;box-shadow:0 40px 120px rgba(0,0,0,.6);animation:popupIn .4s cubic-bezier(.34,1.56,.64,1) both;overflow:hidden}
+@keyframes popupIn{from{opacity:0;transform:scale(.88) translateY(30px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.flash-popup::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--neon),transparent)}
+.fp-close{position:absolute;top:18px;right:20px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--muted);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:all .3s}
+.fp-close:hover{background:rgba(255,78,106,.1);border-color:var(--red);color:var(--red)}
+.fp-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.3);color:var(--neon);padding:5px 14px;border-radius:100px;font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:2px;margin-bottom:20px}
+.fp-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--neon);animation:pulse 2s infinite}
+.fp-title{font-family:var(--font-head);font-size:32px;font-weight:700;color:#fff;line-height:1.15;margin-bottom:14px}
+.fp-title span{color:var(--neon)}
+.fp-desc{font-size:15px;color:var(--muted);line-height:1.75;margin-bottom:32px}
+.fp-features{display:flex;flex-direction:column;gap:12px;margin-bottom:36px}
+.fp-feat{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;font-size:14px;color:var(--text)}
+.fp-feat-dot{width:8px;height:8px;border-radius:50%;background:var(--neon);box-shadow:0 0 8px rgba(0,255,136,.5);flex-shrink:0}
+.fp-cta{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;background:var(--neon);color:#000;padding:18px 32px;border-radius:10px;font-family:var(--font-head);font-size:15px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;box-shadow:0 0 30px rgba(0,255,136,.4);transition:all .3s;border:none}
+.fp-cta:hover{background:#00ffaa;box-shadow:0 0 60px rgba(0,255,136,.7);transform:translateY(-2px)}
+.fp-note{text-align:center;margin-top:16px;font-size:12px;color:var(--muted);font-family:var(--font-mono)}
+.fp-note a{color:var(--teal);text-decoration:none}
 
-  /* ABOUT */
-  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
-  .about-visual{border-radius:24px;background:var(--bg3);border:1px solid var(--border);padding:48px;display:flex;align-items:center;justify-content:center;min-height:400px}
-  .about-big-num{font-family:var(--font-head);font-size:80px;font-weight:700;color:var(--teal);line-height:1;text-shadow:0 0 60px rgba(0,201,167,.4)}
-  .about-big-label{font-size:15px;color:var(--muted);margin-top:8px}
-  .about-values{display:flex;flex-direction:column;gap:24px;margin-top:40px}
-  .about-val{display:flex;gap:20px;align-items:flex-start;padding:20px;border-radius:12px;background:var(--card);border:1px solid var(--border);transition:all .3s}
-  .about-val:hover{border-color:var(--teal);box-shadow:0 0 20px var(--glow)}
-  .av-dot{width:12px;height:12px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:5px;box-shadow:0 0 10px var(--glow)}
-  .av-title{font-family:var(--font-head);font-size:16px;font-weight:600;color:#fff;margin-bottom:6px}
-  .av-desc{font-size:13px;color:var(--muted);line-height:1.6}
+/* ═══════════════════ FLASH WALLETS ═══════════════════ */
+.flash-section{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:48px;margin-top:40px;position:relative;overflow:hidden}
+.flash-title{font-family:var(--font-head);font-size:24px;font-weight:700;color:var(--gold);margin-bottom:8px}
+.flash-sub{font-size:14px;color:var(--muted);margin-bottom:32px}
+.flash-price-row{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:32px}
+.flash-price-chip{background:rgba(244,185,66,.1);border:1px solid rgba(244,185,66,.3);border-radius:8px;padding:12px 20px;font-family:var(--font-mono)}
+.fpc-val{color:var(--gold);font-size:22px;font-weight:600}
+.fpc-label{color:var(--muted);font-size:11px}
+.flash-wallets{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+.wallet-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px;transition:all .3s}
+.wallet-item:hover{border-color:var(--gold);box-shadow:0 0 20px rgba(244,185,66,.15)}
+.wallet-name{font-size:13px;font-weight:600;color:#fff;margin-bottom:6px}
+.wallet-tokens{font-size:11px;color:var(--muted);font-family:var(--font-mono);line-height:1.6}
 
-  /* WHY */
-  .why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px}
-  .why-card{padding:32px;border-radius:16px;border:1px solid var(--border);background:var(--card);position:relative;transition:all .4s;opacity:0;transform:scale(.95)}
-  .why-card.visible{opacity:1;transform:scale(1)}
-  .why-card:hover{border-color:var(--teal);transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,.3)}
-  .why-icon{font-size:36px;margin-bottom:20px}
-  .why-title{font-family:var(--font-head);font-size:19px;font-weight:700;color:#fff;margin-bottom:12px}
-  .why-desc{font-size:14px;color:var(--muted);line-height:1.7}
-  .why-num{position:absolute;top:20px;right:24px;font-family:var(--font-mono);font-size:48px;font-weight:700;color:rgba(0,201,167,.06)}
+/* ═══════════════════ WHY / ABOUT ═══════════════════ */
+.why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px}
+.why-card{padding:32px;border-radius:16px;border:1px solid var(--border);background:var(--card);position:relative;transition:all .4s;opacity:0;transform:scale(.95)}
+.why-card.visible{opacity:1;transform:scale(1)}
+.why-card:hover{border-color:var(--teal);transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,.3)}
+.why-icon{font-size:36px;margin-bottom:20px}
+.why-title{font-family:var(--font-head);font-size:19px;font-weight:700;color:#fff;margin-bottom:12px}
+.why-desc{font-size:14px;color:var(--muted);line-height:1.7}
+.why-num{position:absolute;top:20px;right:24px;font-family:var(--font-mono);font-size:48px;font-weight:700;color:rgba(0,201,167,.06)}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.about-visual{border-radius:24px;background:var(--bg3);border:1px solid var(--border);padding:48px;display:flex;align-items:center;justify-content:center;min-height:400px}
+.about-big-num{font-family:var(--font-head);font-size:80px;font-weight:700;color:var(--teal);line-height:1;text-shadow:0 0 60px rgba(0,201,167,.4)}
+.about-big-label{font-size:15px;color:var(--muted);margin-top:8px}
+.about-values{display:flex;flex-direction:column;gap:24px;margin-top:40px}
+.about-val{display:flex;gap:20px;align-items:flex-start;padding:20px;border-radius:12px;background:var(--card);border:1px solid var(--border);transition:all .3s}
+.about-val:hover{border-color:var(--teal);box-shadow:0 0 20px var(--glow)}
+.av-dot{width:12px;height:12px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:5px;box-shadow:0 0 10px var(--glow)}
+.av-title{font-family:var(--font-head);font-size:16px;font-weight:600;color:#fff;margin-bottom:6px}
+.av-desc{font-size:13px;color:var(--muted);line-height:1.6}
 
-  /* TESTIMONIALS */
-  #testimonials{background:var(--bg2)}
-  .testimonials-container{overflow:hidden}
-  .testimonials-track{display:flex;gap:24px;transition:transform .6s cubic-bezier(.23,1,.32,1)}
-  .testi-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:36px;min-width:380px;max-width:380px;flex-shrink:0;transition:all .4s}
-  .testi-card:hover{border-color:var(--teal);box-shadow:0 20px 60px rgba(0,0,0,.3)}
-  .quote-icon{font-size:60px;color:rgba(0,201,167,.1);font-family:Georgia,serif;line-height:1;margin-bottom:16px;display:block}
-  .testi-text{font-size:15px;color:var(--text);line-height:1.8;margin-bottom:28px}
-  .testi-author{display:flex;align-items:center;gap:14px}
-  .testi-avatar{width:48px;height:48px;border-radius:50%;background:var(--bg3);border:2px solid var(--teal);display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--teal)}
-  .testi-name{font-family:var(--font-head);font-size:16px;font-weight:600;color:#fff}
-  .testi-role{font-size:12px;color:var(--muted)}
-  .testi-stars{display:flex;gap:3px;color:var(--gold);font-size:14px;margin-top:4px}
-  .testi-controls{display:flex;align-items:center;justify-content:space-between;margin-top:40px}
-  .testi-dots{display:flex;gap:8px}
-  .t-dot{width:8px;height:8px;border-radius:100px;background:var(--bg3);border:1px solid var(--border);cursor:pointer;transition:all .3s}
-  .t-dot.active{background:var(--teal);width:24px;box-shadow:0 0 10px var(--glow)}
-  .testi-arrows{display:flex;gap:12px}
-  .t-arrow{width:48px;height:48px;border:1px solid var(--border);border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;color:var(--muted)}
-  .t-arrow:hover{border-color:var(--teal);color:var(--teal);background:rgba(0,201,167,.1)}
+/* ═══════════════════ TESTIMONIALS ═══════════════════ */
+#testimonials{background:var(--bg2)}
+.testimonials-container{overflow:hidden}
+.testimonials-track{display:flex;gap:24px;transition:transform .6s cubic-bezier(.23,1,.32,1)}
+.testi-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:36px;min-width:380px;max-width:380px;flex-shrink:0;transition:all .4s}
+.testi-card:hover{border-color:var(--teal);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.quote-icon{font-size:60px;color:rgba(0,201,167,.1);font-family:Georgia,serif;line-height:1;margin-bottom:16px;display:block}
+.testi-text{font-size:15px;color:var(--text);line-height:1.8;margin-bottom:28px}
+.testi-author{display:flex;align-items:center;gap:14px}
+.testi-avatar{width:48px;height:48px;border-radius:50%;background:var(--bg3);border:2px solid var(--teal);display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--teal)}
+.testi-name{font-family:var(--font-head);font-size:16px;font-weight:600;color:#fff}
+.testi-role{font-size:12px;color:var(--muted)}
+.testi-stars{color:var(--gold);font-size:14px;margin-top:4px}
+.testi-controls{display:flex;align-items:center;justify-content:space-between;margin-top:40px}
+.testi-dots{display:flex;gap:8px}
+.t-dot{width:8px;height:8px;border-radius:100px;background:var(--bg3);border:1px solid var(--border);cursor:pointer;transition:all .3s}
+.t-dot.active{background:var(--teal);width:24px;box-shadow:0 0 10px var(--glow)}
+.testi-arrows{display:flex;gap:12px}
+.t-arrow{width:48px;height:48px;border:1px solid var(--border);border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;color:var(--muted);font-size:18px}
+.t-arrow:hover{border-color:var(--teal);color:var(--teal);background:rgba(0,201,167,.1)}
 
-  /* FAQ */
-  .faq-list{max-width:800px;margin:0 auto}
-  .faq-item{border-bottom:1px solid var(--border)}
-  .faq-q{display:flex;align-items:center;justify-content:space-between;padding:24px 0;cursor:pointer;font-family:var(--font-head);font-size:17px;font-weight:600;color:var(--text);transition:color .3s;gap:20px}
-  .faq-q:hover{color:var(--teal)}
-  .faq-icon{width:32px;height:32px;flex-shrink:0;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--teal);transition:all .3s}
-  .faq-item.open .faq-icon{transform:rotate(45deg);background:var(--teal);color:#000;border-color:var(--teal)}
-  .faq-a{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s;font-size:15px;color:var(--muted);line-height:1.8}
-  .faq-item.open .faq-a{max-height:200px;padding-bottom:24px}
+/* ═══════════════════ FAQ ═══════════════════ */
+.faq-list{max-width:800px;margin:0 auto}
+.faq-item{border-bottom:1px solid var(--border)}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:24px 0;cursor:pointer;font-family:var(--font-head);font-size:17px;font-weight:600;color:var(--text);transition:color .3s;gap:20px}
+.faq-q:hover{color:var(--teal)}
+.faq-icon{width:32px;height:32px;flex-shrink:0;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--teal);transition:all .3s}
+.faq-item.open .faq-icon{transform:rotate(45deg);background:var(--teal);color:#000;border-color:var(--teal)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s;font-size:15px;color:var(--muted);line-height:1.8}
+.faq-item.open .faq-a{max-height:200px;padding-bottom:24px}
 
-  /* CONTACT */
-  #contact{background:var(--bg2);position:relative;overflow:hidden}
-  .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
-  .contact-info h3{font-family:var(--font-head);font-size:32px;font-weight:700;color:#fff;margin-bottom:16px}
-  .contact-info p{font-size:16px;color:var(--muted);margin-bottom:40px;line-height:1.7}
-  .contact-channels{display:flex;flex-direction:column;gap:16px}
-  .channel-link{display:flex;align-items:center;gap:16px;padding:18px 24px;background:var(--card);border:1px solid var(--border);border-radius:12px;text-decoration:none;color:var(--text);transition:all .3s}
-  .channel-link:hover{border-color:var(--teal);color:var(--teal);box-shadow:0 0 20px var(--glow);transform:translateX(4px)}
-  .channel-icon{width:44px;height:44px;background:rgba(0,201,167,.1);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-  .channel-label{font-family:var(--font-head);font-size:16px;font-weight:600}
-  .channel-handle{font-size:13px;color:var(--muted);font-family:var(--font-mono)}
-  .contact-form{display:flex;flex-direction:column;gap:20px}
-  .form-group{display:flex;flex-direction:column;gap:8px}
-  .form-label{font-size:13px;color:var(--muted);letter-spacing:1px;font-family:var(--font-mono)}
-  .form-input,.form-select,.form-textarea{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 18px;color:var(--text);font-family:var(--font-body);font-size:15px;transition:border-color .3s,box-shadow .3s;width:100%;outline:none}
-  .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,201,167,.1)}
-  .form-select option{background:var(--bg2)}
-  .form-textarea{resize:vertical;min-height:120px}
-  .form-submit{background:var(--teal);color:#000;border:none;padding:16px 32px;border-radius:8px;font-family:var(--font-head);font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .3s;box-shadow:0 0 20px var(--glow)}
-  .form-submit:hover{background:var(--neon);box-shadow:0 0 40px rgba(0,255,136,.5);transform:translateY(-2px)}
+/* ═══════════════════ CONTACT ═══════════════════ */
+#contact{background:var(--bg2)}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
+.contact-info h3{font-family:var(--font-head);font-size:32px;font-weight:700;color:#fff;margin-bottom:16px}
+.contact-info p{font-size:16px;color:var(--muted);margin-bottom:40px;line-height:1.7}
+.contact-channels{display:flex;flex-direction:column;gap:16px}
+.channel-link{display:flex;align-items:center;gap:16px;padding:18px 24px;background:var(--card);border:1px solid var(--border);border-radius:12px;text-decoration:none;color:var(--text);transition:all .3s}
+.channel-link:hover{border-color:var(--teal);color:var(--teal);box-shadow:0 0 20px var(--glow);transform:translateX(4px)}
+.channel-icon{width:44px;height:44px;background:rgba(0,201,167,.1);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.channel-label{font-family:var(--font-head);font-size:16px;font-weight:600}
+.channel-handle{font-size:13px;color:var(--muted);font-family:var(--font-mono)}
+.contact-form{display:flex;flex-direction:column;gap:20px}
+.form-group{display:flex;flex-direction:column;gap:8px}
+.form-label{font-size:13px;color:var(--muted);letter-spacing:1px;font-family:var(--font-mono)}
+.form-input,.form-select,.form-textarea{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 18px;color:var(--text);font-family:var(--font-body);font-size:15px;transition:border-color .3s,box-shadow .3s;width:100%;outline:none}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,201,167,.1)}
+.form-select option{background:var(--bg2)}
+.form-textarea{resize:vertical;min-height:120px}
+.form-submit{background:var(--teal);color:#000;border:none;padding:16px 32px;border-radius:8px;font-family:var(--font-head);font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .3s;box-shadow:0 0 20px var(--glow)}
+.form-submit:hover{background:var(--neon);box-shadow:0 0 40px rgba(0,255,136,.5);transform:translateY(-2px)}
 
-  /* FOOTER */
-  footer{background:var(--bg);border-top:1px solid var(--border);padding:60px 60px 40px}
-  .footer-top{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:40px;margin-bottom:48px}
-  .footer-brand p{font-size:14px;color:var(--muted);max-width:280px;line-height:1.7;margin-top:14px}
-  .footer-links h4{font-family:var(--font-head);font-size:13px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:20px}
-  .footer-links ul{list-style:none;display:flex;flex-direction:column;gap:12px}
-  .footer-links a{color:var(--muted);text-decoration:none;font-size:14px;transition:color .3s}
-  .footer-links a:hover{color:var(--teal)}
-  .footer-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;padding-top:32px;border-top:1px solid var(--border);font-size:13px;color:var(--muted)}
-  .teal{color:var(--teal)}
+/* ═══════════════════ FOOTER ═══════════════════ */
+footer{background:var(--bg);border-top:1px solid var(--border);padding:60px 60px 40px}
+.footer-top{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:40px;margin-bottom:48px}
+.footer-brand p{font-size:14px;color:var(--muted);max-width:280px;line-height:1.7;margin-top:14px}
+.footer-links h4{font-family:var(--font-head);font-size:13px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:20px}
+.footer-links ul{list-style:none;display:flex;flex-direction:column;gap:12px}
+.footer-links a{color:var(--muted);text-decoration:none;font-size:14px;transition:color .3s}
+.footer-links a:hover{color:var(--teal)}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;padding-top:32px;border-top:1px solid var(--border);font-size:13px;color:var(--muted)}
+.teal{color:var(--teal)}
 
-  @media(max-width:900px){
-    nav{padding:18px 24px}
-    nav.scrolled{padding:14px 24px}
-    .nav-links,.nav-cta{display:none}
-    .hamburger{display:flex}
-    section{padding:70px 24px}
-    #hero{padding:100px 24px 60px;flex-direction:column}
-    .hero-stats{margin:40px 0 0;flex-direction:row;flex-wrap:wrap}
-    .about-grid,.contact-grid{grid-template-columns:1fr;gap:40px}
-    .steps-row::before{display:none}
-    footer{padding:40px 24px 30px}
-    .footer-top{flex-direction:column}
-    .footer-bottom{flex-direction:column;text-align:center}
-    .flash-section{padding:32px 24px}
-    .divider{margin:0 24px}
-    .flash-popup{padding:28px 20px}
-    .fp-title{font-size:24px}
-  }
+/* ═══════════════════ SPINNER ═══════════════════ */
+.spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(0,0,0,.3);border-top-color:#000;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:900px){
+  nav{padding:18px 24px}
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  section{padding:70px 24px}
+  #hero{padding:100px 24px 60px;flex-direction:column}
+  .hero-stats{margin:40px 0 0;flex-direction:row;flex-wrap:wrap}
+  .about-grid,.contact-grid,.preview-grid{grid-template-columns:1fr;gap:40px}
+  .steps-row::before{display:none}
+  footer{padding:40px 24px 30px}
+  .footer-top{flex-direction:column}
+  .footer-bottom{flex-direction:column;text-align:center}
+  .flash-section{padding:32px 24px}
+  .divider{margin:0 24px}
+  .flash-popup{padding:28px 20px}
+  .fp-title{font-size:24px}
+  .auth-card{padding:32px 24px}
+  .nav-right .nav-cta{display:none}
+}
 </style>
 </head>
 <body>
 
+<!-- CURSOR -->
 <div class="cursor" id="cursor"></div>
 <div class="cursor-ring" id="cursorRing"></div>
+
+<!-- ═══════════ AUTH GATE ═══════════ -->
+<div id="authGate">
+  <canvas id="auth-canvas"></canvas>
+  <div class="auth-card">
+    <div class="auth-logo">NAD<span>.</span>CRYPTO</div>
+    <div class="auth-tagline">&#11044; OTC BROKERAGE &middot; INDIA</div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Login</button>
+      <button class="auth-tab" id="tabSignup" onclick="switchTab('signup')">Sign Up</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div id="loginForm">
+      <div class="auth-form">
+        <div class="auth-form-group">
+          <label class="auth-label">Email Address</label>
+          <input class="auth-input" type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email"/>
+        </div>
+        <div class="auth-form-group">
+          <label class="auth-label">Password</label>
+          <input class="auth-input" type="password" id="loginPass" placeholder="Your password" autocomplete="current-password"/>
+        </div>
+        <div class="auth-error" id="loginError"></div>
+        <button class="auth-btn" id="loginBtn" onclick="doLogin()">
+          <span id="loginBtnText">Login &rarr;</span>
+        </button>
+        <div class="auth-divider"><span>or</span></div>
+        <button class="auth-google-btn" onclick="doGoogleLogin()">
+          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0124 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 01-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>
+          Continue with Google
+        </button>
+      </div>
+      <div class="auth-preview-hint">Just exploring? <span onclick="peekMode()">View limited preview</span></div>
+    </div>
+
+    <!-- SIGNUP FORM -->
+    <div id="signupForm" style="display:none">
+      <div class="auth-form">
+        <div class="auth-form-group">
+          <label class="auth-label">Full Name</label>
+          <input class="auth-input" type="text" id="signupName" placeholder="Your name" autocomplete="name"/>
+        </div>
+        <div class="auth-form-group">
+          <label class="auth-label">Email Address</label>
+          <input class="auth-input" type="email" id="signupEmail" placeholder="you@example.com" autocomplete="email"/>
+        </div>
+        <div class="auth-form-group">
+          <label class="auth-label">Password</label>
+          <input class="auth-input" type="password" id="signupPass" placeholder="Min. 6 characters" autocomplete="new-password"/>
+        </div>
+        <div class="auth-form-group">
+          <label class="auth-label">Confirm Password</label>
+          <input class="auth-input" type="password" id="signupPass2" placeholder="Repeat password" autocomplete="new-password"/>
+        </div>
+        <div class="auth-error" id="signupError"></div>
+        <div class="auth-success" id="signupSuccess"></div>
+        <button class="auth-btn" id="signupBtn" onclick="doSignup()">
+          <span id="signupBtnText">Create Account &rarr;</span>
+        </button>
+        <div class="auth-divider"><span>or</span></div>
+        <button class="auth-google-btn" onclick="doGoogleLogin()">
+          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0124 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 01-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>
+          Continue with Google
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ PREVIEW BANNER (peek mode) ═══════════ -->
+<div id="previewBanner">
+  <div class="preview-banner-text">
+    <span>&#128274;</span>
+    You're viewing a limited preview &mdash; login or sign up for full access
+  </div>
+  <div class="preview-banner-btns">
+    <button class="pbb-login" onclick="showAuthGate()">Login / Sign Up</button>
+  </div>
+</div>
 
 <!-- MOBILE NAV -->
 <div class="mobile-nav" id="mobileNav">
@@ -315,7 +490,7 @@
 <!-- NAV -->
 <nav id="navbar">
   <a class="nav-logo" href="#hero">NAD<span>.</span>CRYPTO</a>
-  <ul class="nav-links">
+  <ul class="nav-links" id="navLinks">
     <li><a href="#rates">Live Rates</a></li>
     <li><a href="#how">How It Works</a></li>
     <li><a href="#services">Services</a></li>
@@ -323,9 +498,24 @@
     <li><a href="#why">Why Us</a></li>
     <li><a href="#faq">FAQ</a></li>
   </ul>
-  <a class="nav-cta" href="#contact">Get a Quote</a>
-  <div class="hamburger" id="hamburgerBtn"><span></span><span></span><span></span></div>
+  <div class="nav-right">
+    <button class="nav-cta" id="navLoginBtn" onclick="showAuthGate()" style="display:none">Login / Sign Up</button>
+    <div class="nav-user" id="navUser">
+      <div class="user-avatar" id="userAvatar">
+        U
+        <div class="user-dropdown" id="userDropdown">
+          <div class="user-email" id="userEmailDisplay"></div>
+          <button class="user-menu-item" onclick="doLogout()">&#128274; Logout</button>
+        </div>
+      </div>
+    </div>
+    <div class="hamburger" id="hamburgerBtn"><span></span><span></span><span></span></div>
+  </div>
 </nav>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--                   MAIN SITE CONTENT                       -->
+<!-- ══════════════════════════════════════════════════════════ -->
 
 <!-- HERO -->
 <section id="hero">
@@ -335,14 +525,14 @@
     <h1 class="hero-title">Fast.<br><span class="accent glow-text">Secure.</span><br>Reliable Crypto Deals.</h1>
     <p class="hero-sub">NAD Crypto Desk connects you to the best OTC crypto rates in India. Direct deals, competitive pricing, and trusted execution &mdash; every time.</p>
     <div class="hero-btns">
-      <a href="#contact" class="btn-primary">
+      <button class="btn-primary" onclick="scrollTo('#contact')">
         <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
         Get Quote
-      </a>
-      <a href="#rates" class="btn-secondary">
+      </button>
+      <button class="btn-secondary" onclick="scrollTo('#rates')">
         <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18 9l-5 5-2-2-5 5"/></svg>
         Live Rates
-      </a>
+      </button>
     </div>
   </div>
   <div class="hero-stats">
@@ -353,7 +543,7 @@
 </section>
 
 <!-- TICKER -->
-<div class="ticker-wrap" aria-hidden="true">
+<div class="ticker-wrap">
   <div class="ticker">
     <div class="ticker-item"><span class="t-name">BTC/INR</span>72,45,310<span class="t-up">&#9650; 2.1%</span></div>
     <div class="ticker-item"><span class="t-name">ETH/INR</span>2,34,820<span class="t-up">&#9650; 1.4%</span></div>
@@ -372,6 +562,44 @@
   </div>
 </div>
 
+<!-- PUBLIC: ABOUT PREVIEW -->
+<section id="about-preview">
+  <div class="section-header text-center">
+    <div class="section-badge">&#9711; What Is NAD Crypto Desk</div>
+    <h2 class="section-title">India's Trusted OTC Crypto Broker</h2>
+    <p class="section-sub">We make buying and selling crypto simple, fast, and secure — with real people behind every deal.</p>
+  </div>
+  <div class="preview-grid">
+    <div class="preview-cards">
+      <div class="preview-card"><div class="pc-icon">&#127970;</div><div><div class="pc-title">OTC Crypto Trading</div><div class="pc-desc">Buy and sell USDT, BTC, ETH, SOL &amp; more directly in INR. No exchange complexity, no hidden fees.</div></div></div>
+      <div class="preview-card"><div class="pc-icon">&#9889;</div><div><div class="pc-title">Flash Services</div><div class="pc-desc">Specialized flash token operations across 9+ wallets including Binance, Trust Wallet, MetaMask &amp; more.</div></div></div>
+      <div class="preview-card"><div class="pc-icon">&#128274;</div><div><div class="pc-title">Secure &amp; Discreet</div><div class="pc-desc">Every deal is handled with full confidentiality. Your data and funds stay protected end-to-end.</div></div></div>
+      <div class="preview-card"><div class="pc-icon">&#127919;</div><div><div class="pc-title">24/7 Availability</div><div class="pc-desc">Real humans on Telegram &amp; WhatsApp round the clock. Get a response in minutes, not hours.</div></div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:24px">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:20px;padding:36px">
+        <div style="font-family:var(--font-head);font-size:48px;font-weight:700;color:var(--teal);margin-bottom:8px">&#8377;120</div>
+        <div style="font-size:14px;color:var(--muted);margin-bottom:24px">Standard USD/INR rate today</div>
+        <div style="height:1px;background:var(--border);margin-bottom:24px"></div>
+        <div style="font-family:var(--font-head);font-size:14px;color:var(--text);margin-bottom:16px">&#128274; Login to unlock:</div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--muted)">
+          <div>&#9989; Live rate cards &amp; bulk pricing</div>
+          <div>&#9989; Full services &amp; flash wallet list</div>
+          <div>&#9989; Testimonials &amp; deal history</div>
+          <div>&#9989; Direct inquiry &amp; contact form</div>
+          <div>&#9989; Free flash crypto generator</div>
+        </div>
+        <button class="auth-btn" style="margin-top:24px;width:100%" onclick="showAuthGate()">Login or Sign Up &rarr;</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ LOCKED SECTIONS (shown after login) ══ -->
+<div id="lockedContent" style="display:none">
+
+<div class="divider"></div>
+
 <!-- LIVE RATES -->
 <section id="rates">
   <div class="section-header">
@@ -380,35 +608,12 @@
     <p class="section-sub">Real-time rates with no hidden fees. What you see is what you get &mdash; guaranteed.</p>
   </div>
   <div class="rates-grid">
-    <div class="rate-card">
-      <div class="rc-badge">BUY</div>
-      <div class="rc-label">Standard &mdash; Any Volume</div>
-      <div class="rc-pair">USD &rarr; INR</div>
-      <div class="rc-val">&#8377;120 <span class="rc-unit">/ USD</span></div>
-    </div>
-    <div class="rate-card">
-      <div class="rc-badge" style="background:rgba(244,185,66,.1);color:var(--gold);border:1px solid rgba(244,185,66,.3)">BULK</div>
-      <div class="rc-label">Volume &gt; $1,000</div>
-      <div class="rc-pair">USD &rarr; INR</div>
-      <div class="rc-val">&#8377;110 <span class="rc-unit">/ USD</span></div>
-    </div>
-    <div class="rate-card">
-      <div class="rc-badge" style="background:rgba(244,185,66,.1);color:var(--gold);border:1px solid rgba(244,185,66,.3)">&#9889; FLASH</div>
-      <div class="rc-label">Flash Service &mdash; Standard</div>
-      <div class="rc-pair">Flash Tokens</div>
-      <div class="rc-val" style="color:var(--gold)">&#8377;20 <span class="rc-unit">/ USD</span></div>
-    </div>
-    <div class="rate-card">
-      <div class="rc-badge">FLASH BULK</div>
-      <div class="rc-label">Flash Volume &mdash; Negotiable</div>
-      <div class="rc-pair">Flash Tokens</div>
-      <div class="rc-val" style="color:var(--neon)">&#8377;15 <span class="rc-unit">/ USD</span></div>
-    </div>
+    <div class="rate-card"><div class="rc-badge">BUY</div><div class="rc-label">Standard &mdash; Any Volume</div><div class="rc-pair">USD &rarr; INR</div><div class="rc-val">&#8377;120 <span class="rc-unit">/ USD</span></div></div>
+    <div class="rate-card"><div class="rc-badge" style="background:rgba(244,185,66,.1);color:var(--gold);border:1px solid rgba(244,185,66,.3)">BULK</div><div class="rc-label">Volume &gt; $1,000</div><div class="rc-pair">USD &rarr; INR</div><div class="rc-val">&#8377;110 <span class="rc-unit">/ USD</span></div></div>
+    <div class="rate-card"><div class="rc-badge" style="background:rgba(244,185,66,.1);color:var(--gold);border:1px solid rgba(244,185,66,.3)">&#9889; FLASH</div><div class="rc-label">Flash Service &mdash; Standard</div><div class="rc-pair">Flash Tokens</div><div class="rc-val" style="color:var(--gold)">&#8377;20 <span class="rc-unit">/ USD</span></div></div>
+    <div class="rate-card"><div class="rc-badge">FLASH BULK</div><div class="rc-label">Flash Volume &mdash; Negotiable</div><div class="rc-pair">Flash Tokens</div><div class="rc-val" style="color:var(--neon)">&#8377;15 <span class="rc-unit">/ USD</span></div></div>
   </div>
-  <div class="rate-note">
-    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
-    <span>Rates are indicative and may vary based on <strong>real-time market conditions</strong> and transaction volume. Contact us for a live quote before executing any deal.</span>
-  </div>
+  <div class="rate-note"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg><span>Rates are indicative and may vary based on <strong>real-time market conditions</strong> and volume. Contact us for a live quote.</span></div>
 </section>
 
 <div class="divider"></div>
@@ -421,10 +626,10 @@
     <p class="section-sub">Four simple steps to get your crypto deal executed safely and swiftly.</p>
   </div>
   <div class="steps-row">
-    <div class="step"><div class="step-num">01</div><div class="step-title">Request a Quote</div><p class="step-desc">Reach out via Telegram, WhatsApp, or our contact form. Tell us your requirements &mdash; amount, token, network.</p></div>
-    <div class="step" style="transition-delay:.1s"><div class="step-num">02</div><div class="step-title">Confirm Rate</div><p class="step-desc">We lock in your rate based on volume and current market. Bulk and negotiated deals welcome.</p></div>
+    <div class="step"><div class="step-num">01</div><div class="step-title">Request a Quote</div><p class="step-desc">Reach out via Telegram, WhatsApp, or our contact form. Tell us your requirements.</p></div>
+    <div class="step" style="transition-delay:.1s"><div class="step-num">02</div><div class="step-title">Confirm Rate</div><p class="step-desc">We lock in your rate based on volume and current market. Bulk deals welcome.</p></div>
     <div class="step" style="transition-delay:.2s"><div class="step-num">03</div><div class="step-title">Execute Transaction</div><p class="step-desc">Send or receive payment. Our team handles execution with precision and speed.</p></div>
-    <div class="step" style="transition-delay:.3s"><div class="step-num">04</div><div class="step-title">Deal Complete</div><p class="step-desc">Crypto or INR lands in your account. Confirmation sent. Ready for the next one.</p></div>
+    <div class="step" style="transition-delay:.3s"><div class="step-num">04</div><div class="step-title">Deal Complete</div><p class="step-desc">Crypto or INR lands in your account. Ready for the next one.</p></div>
   </div>
 </section>
 
@@ -435,55 +640,32 @@
   <div class="section-header">
     <div class="section-badge">&#10070; Services</div>
     <h2 class="section-title u-line">What We Offer</h2>
-    <p class="section-sub">From standard OTC to cutting-edge flash services across all major wallets and networks.</p>
+    <p class="section-sub">From standard OTC to cutting-edge flash services across all major wallets.</p>
   </div>
   <div class="services-grid">
-    <div class="service-card">
-      <div class="svc-icon">&#127970;</div>
-      <div class="svc-title">Crypto Buying</div>
-      <p class="svc-desc">Buy USDT, BTC, ETH, SOL, TRX, and more at competitive INR rates. Standard and bulk volumes both supported.</p>
-    </div>
-    <div class="service-card" style="transition-delay:.1s">
-      <div class="svc-icon">&#128176;</div>
-      <div class="svc-title">Crypto Selling</div>
-      <p class="svc-desc">Sell your crypto holdings for INR with fast settlement. We offer fair market rates and quick processing.</p>
-    </div>
-    <div class="service-card" style="transition-delay:.2s">
-      <div class="svc-icon">&#128202;</div>
-      <div class="svc-title">Bulk OTC Deals</div>
-      <p class="svc-desc">High-volume transactions with negotiated rates. Dedicated support for deals above $1,000. Discreet and secure.</p>
-    </div>
-    <div class="service-card" style="transition-delay:.3s">
-      <div class="svc-icon">&#9889;</div>
-      <div class="svc-title">Flash Services</div>
-      <p class="svc-desc">Specialized flash token transactions across Binance, Bybit, Trust Wallet, MetaMask, Coinbase, Tronlink, and more.</p>
-    </div>
-    <!-- FREE FLASH GENERATOR -->
+    <div class="service-card"><div class="svc-icon">&#127970;</div><div class="svc-title">Crypto Buying</div><p class="svc-desc">Buy USDT, BTC, ETH, SOL, TRX, and more at competitive INR rates. Standard and bulk volumes supported.</p></div>
+    <div class="service-card" style="transition-delay:.1s"><div class="svc-icon">&#128176;</div><div class="svc-title">Crypto Selling</div><p class="svc-desc">Sell your crypto holdings for INR with fast settlement. Fair market rates and quick processing.</p></div>
+    <div class="service-card" style="transition-delay:.2s"><div class="svc-icon">&#128202;</div><div class="svc-title">Bulk OTC Deals</div><p class="svc-desc">High-volume transactions with negotiated rates. Dedicated support for deals above $1,000.</p></div>
+    <div class="service-card" style="transition-delay:.3s"><div class="svc-icon">&#9889;</div><div class="svc-title">Flash Services</div><p class="svc-desc">Specialized flash token transactions across Binance, Bybit, Trust Wallet, MetaMask, Coinbase, Tronlink, and more.</p></div>
     <div class="service-card service-card--flash-gen" id="flashGenCard" style="transition-delay:.4s">
       <div class="free-badge-pill">&#127353; FREE</div>
       <div class="svc-icon">&#129668;</div>
       <div class="svc-title">Flash Crypto Generator</div>
-      <p class="svc-desc">Generate flash crypto yourself &mdash; completely free. No middleman needed. Click to launch the generator and get started instantly.</p>
-      <div class="svc-launch-btn">
-        <span>Launch Generator</span>
-        <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-      </div>
+      <p class="svc-desc">Generate flash crypto yourself &mdash; completely free. No middleman. Click to launch.</p>
+      <div class="svc-launch-btn"><span>Launch Generator</span><svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div>
     </div>
-    <!-- AIRDROPS COMING SOON -->
     <div class="service-card service-card--soon" style="transition-delay:.5s">
       <div class="soon-badge-pill">&#128252; COMING SOON</div>
       <div class="svc-icon">&#129666;</div>
       <div class="svc-title">Airdrops</div>
-      <p class="svc-desc">Exclusive crypto airdrops curated for NAD Crypto Desk users. Early access, verified drops, zero spam. Stay tuned &mdash; big things loading.</p>
+      <p class="svc-desc">Exclusive crypto airdrops for NAD Crypto Desk users. Early access, verified drops, zero spam.</p>
       <div class="soon-bar"><div class="soon-bar-fill"></div></div>
       <div class="soon-hint">Notify me when live &rarr;</div>
     </div>
   </div>
-
-  <!-- FLASH WALLETS -->
   <div class="flash-section">
     <div class="flash-title">&#9889; Flash Service Wallets &amp; Networks</div>
-    <p class="flash-sub">We support flash operations across all major wallets and token standards.</p>
+    <p class="flash-sub">Flash operations across all major wallets and token standards.</p>
     <div class="flash-price-row">
       <div class="flash-price-chip"><div class="fpc-val">&#8377;20</div><div class="fpc-label">/ USD &mdash; Standard</div></div>
       <div class="flash-price-chip"><div class="fpc-val">&#8377;15</div><div class="fpc-label">/ USD &mdash; Bulk (Negotiable)</div></div>
@@ -491,7 +673,7 @@
     <div class="flash-wallets">
       <div class="wallet-item"><div class="wallet-name">&#128310; Binance Web3</div><div class="wallet-tokens">USDT TON &middot; GOLD TON &middot; EURO TON</div></div>
       <div class="wallet-item"><div class="wallet-name">&#128993; Bybit Web3</div><div class="wallet-tokens">USDT TON &middot; GOLD TON &middot; EURO TON</div></div>
-      <div class="wallet-item"><div class="wallet-name">&#128737; Trust Wallet</div><div class="wallet-tokens">USDT BEP20 &middot; USDT SOL &middot; SOL &middot; USDT.Z BEP20 &middot; USD.T BEP20 &middot; BPX TRC20 &middot; USD.T ERC20 &middot; WERC ERC20 &middot; sETH ERC20 &middot; USDG BEP20 &middot; SHIBABTC</div></div>
+      <div class="wallet-item"><div class="wallet-name">&#128737; Trust Wallet</div><div class="wallet-tokens">USDT BEP20 &middot; USDT SOL &middot; SOL &middot; USDT.Z &middot; USD.T &middot; BPX TRC20 &middot; sETH ERC20 &middot; USDG BEP20 &middot; SHIBABTC</div></div>
       <div class="wallet-item"><div class="wallet-name">&#129418; MetaMask</div><div class="wallet-tokens">USDT SOL &middot; BTC SOL &middot; USDC SOL</div></div>
       <div class="wallet-item"><div class="wallet-name">&#128309; Coinbase</div><div class="wallet-tokens">USDT.Z BEP20 &middot; USD.T BEP20</div></div>
       <div class="wallet-item"><div class="wallet-name">&#9889; Tronlink</div><div class="wallet-tokens">USDT TRC20 &middot; TRX</div></div>
@@ -508,12 +690,12 @@
     <div>
       <div class="section-badge">&#9711; About Us</div>
       <h2 class="section-title u-line">NAD Crypto Desk</h2>
-      <p style="font-size:16px;color:var(--muted);line-height:1.8;margin-bottom:32px">NAD Crypto Desk is a trusted OTC crypto brokerage operating in India. We bridge the gap between crypto markets and real-world INR transactions &mdash; offering speed, reliability, and competitive pricing that you won't find anywhere else.</p>
-      <p style="font-size:16px;color:var(--muted);line-height:1.8;margin-bottom:40px">Our team combines deep market knowledge with a commitment to client confidentiality and seamless execution. Whether you're an individual buyer or managing large volumes, we treat every deal with the same level of professionalism.</p>
+      <p style="font-size:16px;color:var(--muted);line-height:1.8;margin-bottom:32px">NAD Crypto Desk is a trusted OTC crypto brokerage operating in India. We bridge the gap between crypto markets and real-world INR transactions &mdash; offering speed, reliability, and competitive pricing.</p>
+      <p style="font-size:16px;color:var(--muted);line-height:1.8;margin-bottom:40px">Our team combines deep market knowledge with a commitment to client confidentiality and seamless execution. Every deal is treated with the same level of professionalism.</p>
       <div class="about-values">
-        <div class="about-val"><div class="av-dot"></div><div><div class="av-title">Speed First</div><div class="av-desc">Most deals executed within minutes of confirmation. No delays, no excuses.</div></div></div>
-        <div class="about-val"><div class="av-dot" style="background:var(--neon);box-shadow:0 0 10px rgba(0,255,136,.5)"></div><div><div class="av-title">100% Transparent</div><div class="av-desc">You see the rate before you commit. No hidden charges, no surprises.</div></div></div>
-        <div class="about-val"><div class="av-dot" style="background:var(--gold);box-shadow:0 0 10px rgba(244,185,66,.5)"></div><div><div class="av-title">Client Confidentiality</div><div class="av-desc">All deals handled with complete discretion. Your data stays private.</div></div></div>
+        <div class="about-val"><div class="av-dot"></div><div><div class="av-title">Speed First</div><div class="av-desc">Most deals executed within minutes of confirmation.</div></div></div>
+        <div class="about-val"><div class="av-dot" style="background:var(--neon)"></div><div><div class="av-title">100% Transparent</div><div class="av-desc">You see the rate before you commit. No hidden charges.</div></div></div>
+        <div class="about-val"><div class="av-dot" style="background:var(--gold)"></div><div><div class="av-title">Client Confidentiality</div><div class="av-desc">All deals handled with complete discretion.</div></div></div>
       </div>
     </div>
     <div class="about-visual">
@@ -522,8 +704,8 @@
         <div class="about-big-label">in transactions processed</div>
         <div style="margin-top:48px;display:flex;gap:32px;justify-content:center">
           <div style="text-align:center"><div style="font-family:var(--font-head);font-size:36px;font-weight:700;color:#fff">500+</div><div style="font-size:13px;color:var(--muted)">Happy Clients</div></div>
-          <div style="text-align:center"><div style="font-family:var(--font-head);font-size:36px;font-weight:700;color:#fff">9+</div><div style="font-size:13px;color:var(--muted)">Wallets Supported</div></div>
-          <div style="text-align:center"><div style="font-family:var(--font-head);font-size:36px;font-weight:700;color:#fff">24/7</div><div style="font-size:13px;color:var(--muted)">Availability</div></div>
+          <div style="text-align:center"><div style="font-family:var(--font-head);font-size:36px;font-weight:700;color:#fff">9+</div><div style="font-size:13px;color:var(--muted)">Wallets</div></div>
+          <div style="text-align:center"><div style="font-family:var(--font-head);font-size:36px;font-weight:700;color:#fff">24/7</div><div style="font-size:13px;color:var(--muted)">Support</div></div>
         </div>
       </div>
     </div>
@@ -537,13 +719,13 @@
   <div class="section-header text-center">
     <div class="section-badge">&#9733; Why NAD</div>
     <h2 class="section-title">Why Choose Us</h2>
-    <p class="section-sub">We've built our reputation on four uncompromising pillars of service.</p>
+    <p class="section-sub">Four uncompromising pillars of service.</p>
   </div>
   <div class="why-grid">
-    <div class="why-card"><div class="why-num">01</div><div class="why-icon">&#9889;</div><div class="why-title">Fast Execution</div><p class="why-desc">Lightning-fast deal processing. We move at the speed of the market &mdash; so you never miss your window.</p></div>
-    <div class="why-card" style="transition-delay:.1s"><div class="why-num">02</div><div class="why-icon">&#128142;</div><div class="why-title">Competitive Rates</div><p class="why-desc">Among the best OTC rates in India. Volume discounts and bulk negotiations available for larger deals.</p></div>
-    <div class="why-card" style="transition-delay:.2s"><div class="why-num">03</div><div class="why-icon">&#128274;</div><div class="why-title">Secure Transactions</div><p class="why-desc">Every deal is handled with industry-grade security protocols. Your funds and identity stay protected.</p></div>
-    <div class="why-card" style="transition-delay:.3s"><div class="why-num">04</div><div class="why-icon">&#127919;</div><div class="why-title">Dedicated Support</div><p class="why-desc">Real humans, real-time. Reach us on Telegram or WhatsApp and get answers &mdash; not bots, not delays.</p></div>
+    <div class="why-card"><div class="why-num">01</div><div class="why-icon">&#9889;</div><div class="why-title">Fast Execution</div><p class="why-desc">Lightning-fast deal processing. We move at the speed of the market.</p></div>
+    <div class="why-card" style="transition-delay:.1s"><div class="why-num">02</div><div class="why-icon">&#128142;</div><div class="why-title">Competitive Rates</div><p class="why-desc">Best OTC rates in India. Volume discounts and bulk negotiations available.</p></div>
+    <div class="why-card" style="transition-delay:.2s"><div class="why-num">03</div><div class="why-icon">&#128274;</div><div class="why-title">Secure Transactions</div><p class="why-desc">Industry-grade security protocols. Your funds and identity stay protected.</p></div>
+    <div class="why-card" style="transition-delay:.3s"><div class="why-num">04</div><div class="why-icon">&#127919;</div><div class="why-title">Dedicated Support</div><p class="why-desc">Real humans, real-time on Telegram &amp; WhatsApp.</p></div>
   </div>
 </section>
 
@@ -554,14 +736,14 @@
   <div class="section-header">
     <div class="section-badge">&#9830; Testimonials</div>
     <h2 class="section-title u-line">What Clients Say</h2>
-    <p class="section-sub">Trusted by crypto traders, businesses, and investors across India.</p>
+    <p class="section-sub">Trusted by crypto traders and investors across India.</p>
   </div>
   <div class="testimonials-container">
     <div class="testimonials-track" id="testiTrack">
-      <div class="testi-card"><span class="quote-icon">"</span><p class="testi-text">NAD Crypto Desk handled my bulk USDT deal seamlessly. The rate was the best I found after checking five brokers. Will definitely be coming back for future transactions.</p><div class="testi-author"><div class="testi-avatar">R</div><div><div class="testi-name">Rahul M.</div><div class="testi-role">Crypto Trader, Delhi</div><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div></div></div></div>
-      <div class="testi-card"><span class="quote-icon">"</span><p class="testi-text">I was skeptical about OTC deals at first, but NAD made the whole process transparent and fast. Got my INR within minutes of sending. Highly professional team.</p><div class="testi-author"><div class="testi-avatar">A</div><div><div class="testi-name">Ayesha K.</div><div class="testi-role">Business Owner, Mumbai</div><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div></div></div></div>
+      <div class="testi-card"><span class="quote-icon">"</span><p class="testi-text">NAD Crypto Desk handled my bulk USDT deal seamlessly. The rate was the best I found after checking five brokers. Will definitely be coming back.</p><div class="testi-author"><div class="testi-avatar">R</div><div><div class="testi-name">Rahul M.</div><div class="testi-role">Crypto Trader, Delhi</div><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div></div></div></div>
+      <div class="testi-card"><span class="quote-icon">"</span><p class="testi-text">I was skeptical about OTC deals at first, but NAD made the whole process transparent and fast. Got my INR within minutes. Highly professional.</p><div class="testi-author"><div class="testi-avatar">A</div><div><div class="testi-name">Ayesha K.</div><div class="testi-role">Business Owner, Mumbai</div><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div></div></div></div>
       <div class="testi-card"><span class="quote-icon">"</span><p class="testi-text">The flash service is insane &mdash; I didn't believe it until I saw it work. NAD Crypto Desk is my go-to now. Rates are fair, execution is lightning fast.</p><div class="testi-author"><div class="testi-avatar">S</div><div><div class="testi-name">Siddharth P.</div><div class="testi-role">Crypto Investor, Bangalore</div><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div></div></div></div>
-      <div class="testi-card"><span class="quote-icon">"</span><p class="testi-text">Excellent communication throughout the whole process. They confirmed my rate, executed the deal, and I had my crypto in minutes. Zero stress experience.</p><div class="testi-author"><div class="testi-avatar">V</div><div><div class="testi-name">Vikram T.</div><div class="testi-role">Freelancer &amp; USDT Holder</div><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div></div></div></div>
+      <div class="testi-card"><span class="quote-icon">"</span><p class="testi-text">Excellent communication throughout. They confirmed my rate, executed the deal, and I had my crypto in minutes. Zero stress experience.</p><div class="testi-author"><div class="testi-avatar">V</div><div><div class="testi-name">Vikram T.</div><div class="testi-role">Freelancer &amp; USDT Holder</div><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div></div></div></div>
     </div>
     <div class="testi-controls">
       <div class="testi-dots" id="testiDots"></div>
@@ -583,34 +765,33 @@
     <p class="section-sub">Everything you need to know before your first deal.</p>
   </div>
   <div class="faq-list">
-    <div class="faq-item"><div class="faq-q">Are the rates fixed or negotiable?<span class="faq-icon">+</span></div><div class="faq-a">Rates may vary based on volume and real-time market conditions. The listed rates are indicative. For large or bulk transactions, better rates can be negotiated directly.</div></div>
-    <div class="faq-item"><div class="faq-q">Is there a minimum transaction amount?<span class="faq-icon">+</span></div><div class="faq-a">We handle transactions of all sizes. Bulk rates (&#8377;110/USD) kick in for deals exceeding $1,000 equivalent. Flash service rates apply to flash token transactions regardless of size.</div></div>
-    <div class="faq-item"><div class="faq-q">How long does a transaction take?<span class="faq-icon">+</span></div><div class="faq-a">Standard OTC deals are typically completed within a few minutes of confirmation. Flash service transactions are near-instant. Network congestion may occasionally add a small delay.</div></div>
-    <div class="faq-item"><div class="faq-q">Which tokens and networks are supported?<span class="faq-icon">+</span></div><div class="faq-a">We support USDT, BTC, ETH, SOL, TRX, BNB, and many more across BEP20, ERC20, TRC20, SOL, and TON networks. Flash services cover 9+ wallets with 25+ token types.</div></div>
-    <div class="faq-item"><div class="faq-q">How do I know my funds are safe?<span class="faq-icon">+</span></div><div class="faq-a">You confirm the rate and address before any transfer. We do not hold your funds beyond the time required to execute the trade. Our team has a strong track record of safe, successful transactions.</div></div>
-    <div class="faq-item"><div class="faq-q">What is the Free Flash Crypto Generator?<span class="faq-icon">+</span></div><div class="faq-a">The Free Flash Crypto Generator lets you generate flash crypto yourself at zero cost. Click the Flash Crypto Generator card in our Services section &mdash; no registration required, 100% free.</div></div>
+    <div class="faq-item"><div class="faq-q">Are the rates fixed or negotiable?<span class="faq-icon">+</span></div><div class="faq-a">Rates vary based on volume and market conditions. For bulk transactions, better rates can be negotiated directly.</div></div>
+    <div class="faq-item"><div class="faq-q">Is there a minimum transaction amount?<span class="faq-icon">+</span></div><div class="faq-a">We handle all sizes. Bulk rates (&#8377;110/USD) kick in above $1,000. Flash rates apply to flash token transactions regardless.</div></div>
+    <div class="faq-item"><div class="faq-q">How long does a transaction take?<span class="faq-icon">+</span></div><div class="faq-a">Standard OTC deals complete within minutes of confirmation. Flash transactions are near-instant.</div></div>
+    <div class="faq-item"><div class="faq-q">Which tokens and networks are supported?<span class="faq-icon">+</span></div><div class="faq-a">USDT, BTC, ETH, SOL, TRX, BNB and more across BEP20, ERC20, TRC20, SOL, and TON networks.</div></div>
+    <div class="faq-item"><div class="faq-q">What is the Free Flash Crypto Generator?<span class="faq-icon">+</span></div><div class="faq-a">A free tool letting you generate flash crypto yourself at zero cost. No registration required. Click the Flash Crypto Generator card in Services.</div></div>
   </div>
 </section>
 
 <!-- CONTACT -->
-<section id="contact">
+<section id="contact" style="background:var(--bg2)">
   <div class="contact-grid">
     <div class="contact-info">
       <div class="section-badge">&#9678; Contact</div>
       <h3>Start Your Deal Today</h3>
-      <p>Reach out through your preferred channel. We're available 24/7 and respond fast.</p>
+      <p>Available 24/7 &mdash; reach out through your preferred channel and we respond fast.</p>
       <div class="contact-channels">
         <a href="https://t.me/nadcryptodesk" class="channel-link" target="_blank"><div class="channel-icon">&#9992;</div><div><div class="channel-label">Telegram</div><div class="channel-handle">@nadcryptodesk</div></div></a>
         <a href="https://wa.me/919204465448" class="channel-link" target="_blank"><div class="channel-icon">&#128241;</div><div><div class="channel-label">WhatsApp</div><div class="channel-handle">+91 92044 65448</div></div></a>
-        <a href="mailto:desk@nadcrypto.in" class="channel-link"><div class="channel-icon">&#128231;</div><div><div class="channel-label">Email</div><div class="channel-handle">nadcryptodesk@gmail.com</div></div></a>
+        <a href="mailto:nadcryptodesk@gmail.com" class="channel-link"><div class="channel-icon">&#128231;</div><div><div class="channel-label">Email</div><div class="channel-handle">nadcryptodesk@gmail.com</div></div></a>
       </div>
     </div>
     <div>
       <div class="section-badge" style="margin-bottom:24px">&#10070; Quick Inquiry</div>
       <div class="contact-form" id="contactForm">
-        <div class="form-group"><label class="form-label">YOUR NAME</label><input class="form-input" type="text" placeholder="Full name" id="f-name"/></div>
-        <div class="form-group"><label class="form-label">CONTACT (TELEGRAM / WHATSAPP)</label><input class="form-input" type="text" placeholder="@username or +91 XXXXX" id="f-contact"/></div>
-        <div class="form-group"><label class="form-label">TRANSACTION TYPE</label>
+        <div class="form-group"><label class="form-label">Your Name</label><input class="form-input" type="text" placeholder="Full name" id="f-name"/></div>
+        <div class="form-group"><label class="form-label">Contact (Telegram / WhatsApp)</label><input class="form-input" type="text" placeholder="@username or +91 XXXXX" id="f-contact"/></div>
+        <div class="form-group"><label class="form-label">Transaction Type</label>
           <select class="form-select" id="f-type">
             <option value="">Select service...</option>
             <option>Buy Crypto (Standard)</option>
@@ -619,32 +800,33 @@
             <option>Flash Service</option>
           </select>
         </div>
-        <div class="form-group"><label class="form-label">DETAILS / AMOUNT</label><textarea class="form-textarea" placeholder="Token, amount, network, and any specific requirements..." id="f-msg"></textarea></div>
+        <div class="form-group"><label class="form-label">Details / Amount</label><textarea class="form-textarea" placeholder="Token, amount, network..." id="f-msg"></textarea></div>
         <button class="form-submit" id="formSubmitBtn">Send Inquiry &rarr;</button>
       </div>
       <div id="formSuccess" style="display:none;text-align:center;padding:40px;background:var(--card);border:1px solid var(--teal);border-radius:12px">
         <div style="font-size:48px;margin-bottom:16px">&#9989;</div>
         <div style="font-family:var(--font-head);font-size:22px;color:#fff;margin-bottom:8px">Inquiry Sent!</div>
-        <div style="color:var(--muted);font-size:14px">We'll reach out to you within minutes. Stay ready.</div>
+        <div style="color:var(--muted);font-size:14px">We'll reach out within minutes. Stay ready.</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- FOOTER -->
+</div><!-- /lockedContent -->
+
+<!-- FOOTER (always visible) -->
 <footer>
   <div class="footer-top">
     <div class="footer-brand">
       <a class="nav-logo" href="#hero">NAD<span>.</span>CRYPTO</a>
-      <p>Fast, secure, and reliable OTC crypto brokerage for the Indian market. Serving individual traders and bulk clients alike.</p>
+      <p>Fast, secure, and reliable OTC crypto brokerage for the Indian market.</p>
     </div>
-    <div class="footer-links"><h4>Navigate</h4><ul><li><a href="#rates">Live Rates</a></li><li><a href="#how">How It Works</a></li><li><a href="#services">Services</a></li><li><a href="#about">About</a></li></ul></div>
-    <div class="footer-links"><h4>Services</h4><ul><li><a href="#services">Crypto Buying</a></li><li><a href="#services">Crypto Selling</a></li><li><a href="#services">Bulk OTC</a></li><li><a href="#services">Flash Services</a></li></ul></div>
-    <div class="footer-links"><h4>Contact</h4><ul><li><a href="https://t.me/nadcryptodesk" target="_blank">Telegram</a></li><li><a href="https://wa.me/919204465448" target="_blank">WhatsApp</a></li><li><a href="mailto:desk@nadcrypto.in">Email</a></li><li><a href="#faq">FAQ</a></li></ul></div>
+    <div class="footer-links"><h4>Navigate</h4><ul><li><a href="#rates">Live Rates</a></li><li><a href="#services">Services</a></li><li><a href="#about">About</a></li><li><a href="#faq">FAQ</a></li></ul></div>
+    <div class="footer-links"><h4>Contact</h4><ul><li><a href="https://t.me/nadcryptodesk" target="_blank">Telegram</a></li><li><a href="https://wa.me/919204465448" target="_blank">WhatsApp</a></li><li><a href="mailto:nadcryptodesk@gmail.com">Email</a></li></ul></div>
   </div>
   <div class="footer-bottom">
     <span>&copy; 2025 <span class="teal">NAD Crypto Desk</span>. All rights reserved.</span>
-    <span style="font-family:var(--font-mono);font-size:11px">Rates may vary &middot; Not financial advice &middot; OTC brokerage service</span>
+    <span style="font-family:var(--font-mono);font-size:11px">Rates may vary &middot; Not financial advice</span>
   </div>
 </footer>
 
@@ -654,43 +836,280 @@
     <button class="fp-close" id="fpCloseBtn">&#10005;</button>
     <div class="fp-badge"><span class="fp-dot"></span>FREE &middot; NO COST &middot; INSTANT</div>
     <div class="fp-title">Flash Crypto<br><span>Generator</span> &#129668;</div>
-    <p class="fp-desc">Generate flash crypto directly &mdash; no fees, no middleman, no signup required. Works with all major wallets across multiple networks. Just hit the button and go.</p>
+    <p class="fp-desc">Generate flash crypto directly &mdash; no fees, no middleman, no signup. Works with all major wallets. Just hit the button and go.</p>
     <div class="fp-features">
-      <div class="fp-feat"><div class="fp-feat-dot"></div>Supports Trust Wallet, MetaMask, Binance, Bybit &amp; more</div>
-      <div class="fp-feat"><div class="fp-feat-dot"></div>Multiple token standards &mdash; TRC20, BEP20, ERC20, SOL, TON</div>
+      <div class="fp-feat"><div class="fp-feat-dot"></div>Trust Wallet, MetaMask, Binance, Bybit &amp; more</div>
+      <div class="fp-feat"><div class="fp-feat-dot"></div>TRC20, BEP20, ERC20, SOL, TON supported</div>
       <div class="fp-feat"><div class="fp-feat-dot"></div>100% free &mdash; powered by NAD Crypto Desk</div>
-      <div class="fp-feat"><div class="fp-feat-dot"></div>Instant generation, no KYC, no registration needed</div>
+      <div class="fp-feat"><div class="fp-feat-dot"></div>Instant &mdash; no KYC, no registration</div>
     </div>
-    <a class="fp-cta" href="https://sahma.in/" target="_blank" rel="noopener noreferrer">
+    <a class="fp-cta" href="https://sahma.in/" target="_blank" rel="noopener">
       <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
       Launch Flash Generator
     </a>
-    <div class="fp-note">You'll be redirected to <a href="https://sahma.in/" target="_blank">sahma.in</a> &nbsp;&middot;&nbsp; Opens in new tab</div>
+    <div class="fp-note">Opens <a href="https://sahma.in/" target="_blank">sahma.in</a> in a new tab</div>
   </div>
 </div>
 
-<script>
-// =====================================================================
-//  ALL JS — single script block, no inline onclick except mobile nav
-// =====================================================================
+<!-- ═══════════════════════════════════ FIREBASE SDK ═══════════════════════════════════ -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+         signOut, onAuthStateChanged, updateProfile,
+         GoogleAuthProvider, signInWithPopup,
+         browserLocalPersistence, setPersistence
+       } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
-// ── Popup ──────────────────────────────────────────────────────────────
-function openFlashPopup() {
-  document.getElementById('flashPopupOverlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
+const firebaseConfig = {
+  apiKey: "AIzaSyAnCpbnn21t_0Gvf0hB2XaWUPOjfZwPTvU",
+  authDomain: "nad-crypto-desk.firebaseapp.com",
+  projectId: "nad-crypto-desk",
+  storageBucket: "nad-crypto-desk.firebasestorage.app",
+  messagingSenderId: "373540818278",
+  appId: "1:373540818278:web:70507b6dfa16a14ac3cca7",
+  measurementId: "G-6L595W90Z5"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// ── Persistent login (survives refresh) ──────────────────────────────────────
+setPersistence(auth, browserLocalPersistence);
+
+const googleProvider = new GoogleAuthProvider();
+
+// ── Expose auth functions to window so non-module HTML handlers can call them ─
+window._fbLogin = async (email, pass) => {
+  await signInWithEmailAndPassword(auth, email, pass);
+};
+window._fbSignup = async (email, pass, name) => {
+  const cred = await createUserWithEmailAndPassword(auth, email, pass);
+  if (name) await updateProfile(cred.user, { displayName: name });
+};
+window._fbGoogleLogin = async () => {
+  await signInWithPopup(auth, googleProvider);
+};
+window._fbLogout = async () => {
+  await signOut(auth);
+};
+
+// ── Auth state listener ───────────────────────────────────────────────────────
+onAuthStateChanged(auth, user => {
+  if (user) {
+    // LOGGED IN
+    window._currentUser = user;
+    hideAuthGate();
+    showFullSite(user);
+  } else {
+    // LOGGED OUT
+    window._currentUser = null;
+    // Only show gate if not in peek mode
+    if (!window._peekMode) showAuthGateUI();
+    else showPreviewOnly();
+  }
+});
+</script>
+
+<!-- ═══════════════════════════════════ APP JS ═══════════════════════════════════ -->
+<script>
+// ── State ────────────────────────────────────────────────────────────────────
+window._peekMode = false;
+window._currentUser = null;
+
+// ── Auth gate visibility ──────────────────────────────────────────────────────
+function showAuthGateUI() {
+  document.getElementById('authGate').style.display = 'flex';
+  document.getElementById('previewBanner').classList.remove('show');
+  document.getElementById('lockedContent').style.display = 'none';
+  document.getElementById('navLoginBtn').style.display = 'none';
+  document.getElementById('navUser').classList.remove('show');
 }
-function closeFlashPopup() {
-  document.getElementById('flashPopupOverlay').classList.remove('open');
-  document.body.style.overflow = '';
+function hideAuthGate() {
+  document.getElementById('authGate').style.display = 'none';
 }
+function showAuthGate() {
+  window._peekMode = false;
+  showAuthGateUI();
+}
+window.showAuthGate = showAuthGate;
+
+function showPreviewOnly() {
+  document.getElementById('authGate').style.display = 'none';
+  document.getElementById('previewBanner').classList.add('show');
+  document.getElementById('lockedContent').style.display = 'none';
+  document.getElementById('navLoginBtn').style.display = 'inline-flex';
+  document.getElementById('navUser').classList.remove('show');
+  document.body.style.paddingTop = '52px';
+}
+
+function showFullSite(user) {
+  document.getElementById('authGate').style.display = 'none';
+  document.getElementById('previewBanner').classList.remove('show');
+  document.getElementById('lockedContent').style.display = 'block';
+  document.getElementById('navLoginBtn').style.display = 'none';
+  document.body.style.paddingTop = '0';
+  // Show user avatar
+  var navUser = document.getElementById('navUser');
+  navUser.classList.add('show');
+  var initial = (user.displayName || user.email || 'U')[0].toUpperCase();
+  document.getElementById('userAvatar').textContent = initial;
+  // re-add dropdown HTML (textContent wiped it)
+  document.getElementById('userAvatar').innerHTML =
+    initial +
+    '<div class="user-dropdown" id="userDropdown">' +
+    '<div class="user-email" id="userEmailDisplay">' + (user.email || '') + '</div>' +
+    '<button class="user-menu-item logout" onclick="doLogout()">&#128274; Logout</button>' +
+    '</div>';
+  // init site interactions
+  initSiteInteractions();
+}
+
+// ── Tab switching ─────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.getElementById('loginForm').style.display   = tab === 'login'  ? 'block' : 'none';
+  document.getElementById('signupForm').style.display  = tab === 'signup' ? 'block' : 'none';
+  document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
+  document.getElementById('tabSignup').classList.toggle('active', tab === 'signup');
+  clearErrors();
+}
+window.switchTab = switchTab;
+
+function clearErrors() {
+  ['loginError','signupError','signupSuccess'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el){ el.className = el.className.replace(' show',''); el.textContent = ''; }
+  });
+}
+
+function showError(id, msg) {
+  var el = document.getElementById(id);
+  el.textContent = msg; el.classList.add('show');
+}
+function showSuccess(id, msg) {
+  var el = document.getElementById(id);
+  el.textContent = msg; el.classList.add('show');
+}
+
+function setLoading(btnId, textId, loading, text) {
+  var btn = document.getElementById(btnId);
+  var span = document.getElementById(textId);
+  btn.disabled = loading;
+  span.innerHTML = loading ? '<span class="spin"></span>' : text;
+}
+
+// ── Login ─────────────────────────────────────────────────────────────────────
+async function doLogin() {
+  clearErrors();
+  var email = document.getElementById('loginEmail').value.trim();
+  var pass  = document.getElementById('loginPass').value;
+  if (!email || !pass) { showError('loginError','Please fill in all fields.'); return; }
+  setLoading('loginBtn','loginBtnText',true,'');
+  try {
+    await window._fbLogin(email, pass);
+  } catch(e) {
+    setLoading('loginBtn','loginBtnText',false,'Login &rarr;');
+    showError('loginError', friendlyError(e.code));
+  }
+}
+window.doLogin = doLogin;
+
+// ── Signup ────────────────────────────────────────────────────────────────────
+async function doSignup() {
+  clearErrors();
+  var name   = document.getElementById('signupName').value.trim();
+  var email  = document.getElementById('signupEmail').value.trim();
+  var pass   = document.getElementById('signupPass').value;
+  var pass2  = document.getElementById('signupPass2').value;
+  if (!name || !email || !pass) { showError('signupError','Please fill in all fields.'); return; }
+  if (pass !== pass2)           { showError('signupError','Passwords do not match.'); return; }
+  if (pass.length < 6)          { showError('signupError','Password must be at least 6 characters.'); return; }
+  setLoading('signupBtn','signupBtnText',true,'');
+  try {
+    await window._fbSignup(email, pass, name);
+  } catch(e) {
+    setLoading('signupBtn','signupBtnText',false,'Create Account &rarr;');
+    showError('signupError', friendlyError(e.code));
+  }
+}
+window.doSignup = doSignup;
+
+// ── Google login ──────────────────────────────────────────────────────────────
+async function doGoogleLogin() {
+  clearErrors();
+  try {
+    await window._fbGoogleLogin();
+  } catch(e) {
+    showError('loginError', friendlyError(e.code));
+  }
+}
+window.doGoogleLogin = doGoogleLogin;
+
+// ── Logout ────────────────────────────────────────────────────────────────────
+async function doLogout() {
+  await window._fbLogout();
+  window._peekMode = false;
+  showAuthGateUI();
+}
+window.doLogout = doLogout;
+
+// ── Peek mode ─────────────────────────────────────────────────────────────────
+function peekMode() {
+  window._peekMode = true;
+  showPreviewOnly();
+}
+window.peekMode = peekMode;
+
+// ── Friendly error messages ───────────────────────────────────────────────────
+function friendlyError(code) {
+  var map = {
+    'auth/user-not-found':      'No account found with this email.',
+    'auth/wrong-password':      'Incorrect password. Try again.',
+    'auth/email-already-in-use':'An account with this email already exists.',
+    'auth/invalid-email':       'Please enter a valid email address.',
+    'auth/weak-password':       'Password must be at least 6 characters.',
+    'auth/too-many-requests':   'Too many attempts. Please try again later.',
+    'auth/popup-closed-by-user':'Google sign-in was cancelled.',
+    'auth/network-request-failed':'Network error. Check your connection.',
+    'auth/invalid-credential':  'Invalid email or password.',
+  };
+  return map[code] || 'Something went wrong. Please try again.';
+}
+
+// ── Enter key support on auth inputs ─────────────────────────────────────────
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Enter') return;
+  var loginVisible = document.getElementById('loginForm').style.display !== 'none';
+  if (loginVisible) doLogin();
+  else doSignup();
+});
+
+// ── scrollTo helper ───────────────────────────────────────────────────────────
+window.scrollTo = function(sel) {
+  var t = document.querySelector(sel);
+  if (t) t.scrollIntoView({behavior:'smooth',block:'start'});
+};
+
+// ── Mobile nav ────────────────────────────────────────────────────────────────
 function openMobileNav()  { document.getElementById('mobileNav').classList.add('open'); }
 function closeMobileNav() { document.getElementById('mobileNav').classList.remove('open'); }
+window.openMobileNav = openMobileNav;
+window.closeMobileNav = closeMobileNav;
+
+// ── Flash popup ───────────────────────────────────────────────────────────────
+function openFlashPopup()  { document.getElementById('flashPopupOverlay').classList.add('open');  document.body.style.overflow='hidden'; }
+function closeFlashPopup() { document.getElementById('flashPopupOverlay').classList.remove('open'); document.body.style.overflow=''; }
+window.openFlashPopup  = openFlashPopup;
+window.closeFlashPopup = closeFlashPopup;
+
+// ── Toggle FAQ ────────────────────────────────────────────────────────────────
 function toggleFaq(el) {
   var item = el.closest('.faq-item');
   var wasOpen = item.classList.contains('open');
   document.querySelectorAll('.faq-item').forEach(function(i){ i.classList.remove('open'); });
   if (!wasOpen) item.classList.add('open');
 }
+
+// ── Submit inquiry form ───────────────────────────────────────────────────────
 function submitForm() {
   var name    = (document.getElementById('f-name').value    || '').trim();
   var contact = (document.getElementById('f-contact').value || '').trim();
@@ -705,146 +1124,162 @@ function submitForm() {
           + '\n_Sent via nadcryptodesk.in_';
   document.getElementById('contactForm').style.display = 'none';
   document.getElementById('formSuccess').style.display = 'block';
-  setTimeout(function(){ window.open('https://wa.me/919204465448?text=' + encodeURIComponent(txt), '_blank'); }, 600);
+  setTimeout(function(){ window.open('https://wa.me/919204465448?text='+encodeURIComponent(txt),'_blank'); }, 600);
 }
 
-// ── Wire up everything after DOM is ready ─────────────────────────────
-document.addEventListener('DOMContentLoaded', function() {
-
-  // Flash card
-  document.getElementById('flashGenCard').addEventListener('click', openFlashPopup);
-
-  // Popup close button
-  document.getElementById('fpCloseBtn').addEventListener('click', function(e){ e.stopPropagation(); closeFlashPopup(); });
-
-  // Click outside popup
-  document.getElementById('flashPopupOverlay').addEventListener('click', function(e){ if(e.target === this) closeFlashPopup(); });
-
-  // ESC
-  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeFlashPopup(); });
+// ── Site interactions (called once user logs in) ──────────────────────────────
+var _interactionsInited = false;
+function initSiteInteractions() {
+  if (_interactionsInited) return;
+  _interactionsInited = true;
 
   // Hamburger
-  document.getElementById('hamburgerBtn').addEventListener('click', openMobileNav);
+  var hb = document.getElementById('hamburgerBtn');
+  if (hb) hb.addEventListener('click', openMobileNav);
 
-  // Form submit
-  document.getElementById('formSubmitBtn').addEventListener('click', submitForm);
+  // Popup
+  var fc = document.getElementById('flashGenCard');
+  if (fc) fc.addEventListener('click', openFlashPopup);
+  var fpb = document.getElementById('fpCloseBtn');
+  if (fpb) fpb.addEventListener('click', function(e){ e.stopPropagation(); closeFlashPopup(); });
+  var fpo = document.getElementById('flashPopupOverlay');
+  if (fpo) fpo.addEventListener('click', function(e){ if(e.target===this) closeFlashPopup(); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeFlashPopup(); });
 
-  // Nav previous/next testimonial
-  document.getElementById('tPrev').addEventListener('click', function(){ goTesti((tIdx - 1 + 4) % 4); });
-  document.getElementById('tNext').addEventListener('click', function(){ goTesti((tIdx + 1) % 4); });
+  // Form
+  var fsb = document.getElementById('formSubmitBtn');
+  if (fsb) fsb.addEventListener('click', submitForm);
 
-  // FAQ items
+  // FAQ
   document.querySelectorAll('.faq-q').forEach(function(q){
     q.addEventListener('click', function(){ toggleFaq(this); });
   });
 
-  // Smooth anchors
-  document.querySelectorAll('a[href^="#"]').forEach(function(a){
-    a.addEventListener('click', function(e){
-      var t = document.querySelector(a.getAttribute('href'));
-      if(t){ e.preventDefault(); t.scrollIntoView({behavior:'smooth',block:'start'}); }
+  // Testimonials
+  var tIdx=0, cardW=0;
+  var track = document.getElementById('testiTrack');
+  var tcards = track ? track.querySelectorAll('.testi-card') : [];
+  var dotsEl = document.getElementById('testiDots');
+  function initT(){
+    if(!tcards.length) return;
+    cardW = tcards[0].offsetWidth + 24;
+    if(dotsEl){ dotsEl.innerHTML = ''; }
+    tcards.forEach(function(_,i){
+      var d = document.createElement('div');
+      d.className = 't-dot' + (i===0?' active':'');
+      d.addEventListener('click', function(){ goT(i); });
+      if(dotsEl) dotsEl.appendChild(d);
     });
-  });
-
-  // Nav scroll shrink
-  window.addEventListener('scroll', function(){
-    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
-  });
-
-  // ── Custom cursor ────────────────────────────────────────────────────
-  var cur = document.getElementById('cursor');
-  var ring = document.getElementById('cursorRing');
-  var mx=0,my=0,rx=0,ry=0;
-  document.addEventListener('mousemove', function(e){
-    mx=e.clientX; my=e.clientY;
-    cur.style.transform = 'translate('+(mx-6)+'px,'+(my-6)+'px)';
-  });
-  (function animRing(){
-    rx += (mx-rx)*.12; ry += (my-ry)*.12;
-    ring.style.transform = 'translate('+(rx-18)+'px,'+(ry-18)+'px)';
-    requestAnimationFrame(animRing);
-  })();
-
-  // ── Hero canvas ──────────────────────────────────────────────────────
-  var canvas = document.getElementById('hero-canvas');
-  var ctx = canvas.getContext('2d');
-  var W=0, H=0, nodes=[], frame=0;
-  function resizeC(){ W=canvas.width=canvas.offsetWidth; H=canvas.height=canvas.offsetHeight; }
-  resizeC();
-  window.addEventListener('resize', resizeC);
-  for(var i=0;i<80;i++) nodes.push({x:Math.random()*1200,y:Math.random()*700,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:Math.random()*2+.5});
-  function drawC(){
-    ctx.clearRect(0,0,W,H);
-    ctx.strokeStyle='rgba(0,201,167,0.04)'; ctx.lineWidth=1;
-    for(var x=0;x<W;x+=60){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
-    for(var y=0;y<H;y+=60){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
-    nodes.forEach(function(n){
-      n.x+=n.vx; n.y+=n.vy;
-      if(n.x<0||n.x>W) n.vx*=-1;
-      if(n.y<0||n.y>H) n.vy*=-1;
-    });
-    for(var a=0;a<nodes.length;a++){
-      for(var b=a+1;b<nodes.length;b++){
-        var dx=nodes[a].x-nodes[b].x, dy=nodes[a].y-nodes[b].y, d=Math.sqrt(dx*dx+dy*dy);
-        if(d<130){ ctx.strokeStyle='rgba(0,201,167,'+(0.15*(1-d/130))+')'; ctx.lineWidth=.5; ctx.beginPath(); ctx.moveTo(nodes[a].x,nodes[a].y); ctx.lineTo(nodes[b].x,nodes[b].y); ctx.stroke(); }
-      }
-    }
-    nodes.forEach(function(n){ ctx.fillStyle='rgba(0,201,167,0.7)'; ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,Math.PI*2); ctx.fill(); });
-    frame++; requestAnimationFrame(drawC);
   }
-  drawC();
+  function goT(idx){
+    tIdx = idx;
+    if(track) track.style.transform = 'translateX(-'+(tIdx*cardW)+'px)';
+    if(dotsEl) dotsEl.querySelectorAll('.t-dot').forEach(function(d,i){ d.classList.toggle('active',i===tIdx); });
+  }
+  var tpb = document.getElementById('tPrev');
+  var tnb = document.getElementById('tNext');
+  if(tpb) tpb.addEventListener('click', function(){ goT((tIdx-1+tcards.length)%tcards.length); });
+  if(tnb) tnb.addEventListener('click', function(){ goT((tIdx+1)%tcards.length); });
+  window.addEventListener('load', initT);
+  window.addEventListener('resize', initT);
+  setTimeout(initT, 100);
+  setInterval(function(){ if(tcards.length) goT((tIdx+1)%tcards.length); }, 5000);
 
-  // ── Scroll reveal ────────────────────────────────────────────────────
+  // Scroll reveal
   var obs = new IntersectionObserver(function(entries){
     entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('visible'); });
   },{threshold:0.1});
   document.querySelectorAll('.step,.service-card,.why-card').forEach(function(el){ obs.observe(el); });
 
-  // ── Count up ─────────────────────────────────────────────────────────
+  // Count up
   var counted=false;
   new IntersectionObserver(function(entries){
     if(entries[0].isIntersecting && !counted){
       counted=true;
       var el=document.getElementById('countNum'), st=null;
-      function step(ts){
-        if(!st) st=ts;
-        var p=Math.min((ts-st)/2000,1);
-        el.textContent='\u20B9'+Math.floor(p*50000000).toLocaleString('en-IN')+'+';
-        if(p<1) requestAnimationFrame(step);
-      }
+      function step(ts){ if(!st) st=ts; var p=Math.min((ts-st)/2000,1); el.textContent='\u20B9'+Math.floor(p*50000000).toLocaleString('en-IN')+'+'; if(p<1) requestAnimationFrame(step); }
       requestAnimationFrame(step);
     }
   },{threshold:0.4}).observe(document.getElementById('about'));
 
-  // ── Testimonials slider ───────────────────────────────────────────────
-  var tIdx=0, cardW=0;
-  var track=document.getElementById('testiTrack');
-  var tcards=track.querySelectorAll('.testi-card');
-  var dotsEl=document.getElementById('testiDots');
-  function initT(){
-    cardW=tcards[0].offsetWidth+24;
-    dotsEl.innerHTML='';
-    tcards.forEach(function(_,i){
-      var d=document.createElement('div'); d.className='t-dot'+(i===0?' active':'');
-      d.addEventListener('click',function(){ goTesti(i); }); dotsEl.appendChild(d);
+  // Smooth anchors
+  document.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener('click',function(e){
+      var t=document.querySelector(a.getAttribute('href'));
+      if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'});}
     });
-  }
-  function goTesti(idx){
-    tIdx=idx; track.style.transform='translateX(-'+(tIdx*cardW)+'px)';
-    dotsEl.querySelectorAll('.t-dot').forEach(function(d,i){ d.classList.toggle('active',i===tIdx); });
-  }
-  window.addEventListener('load', initT);
-  window.addEventListener('resize', initT);
-  setInterval(function(){ goTesti((tIdx+1)%tcards.length); }, 5000);
+  });
 
-  // ── Live rate shimmer ─────────────────────────────────────────────────
-  var rateEl=document.getElementById('ticker-usd');
+  // Rate shimmer
+  var rateEl = document.getElementById('ticker-usd');
   setInterval(function(){
     var j=(Math.random()-.5)*.4;
     rateEl.textContent='\u20B9'+(120+j).toFixed(2);
   },3000);
+}
 
-}); // end DOMContentLoaded
+// ── NAV scroll ────────────────────────────────────────────────────────────────
+window.addEventListener('scroll', function(){
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// ── Cursor ────────────────────────────────────────────────────────────────────
+(function(){
+  var cur=document.getElementById('cursor'), ring=document.getElementById('cursorRing');
+  var mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',function(e){ mx=e.clientX; my=e.clientY; cur.style.transform='translate('+(mx-6)+'px,'+(my-6)+'px)'; });
+  (function anim(){ rx+=(mx-rx)*.12; ry+=(my-ry)*.12; ring.style.transform='translate('+(rx-18)+'px,'+(ry-18)+'px)'; requestAnimationFrame(anim); })();
+})();
+
+// ── Auth page canvas ──────────────────────────────────────────────────────────
+(function(){
+  var c=document.getElementById('auth-canvas');
+  if(!c) return;
+  var ctx=c.getContext('2d'), W,H,nodes=[];
+  function resize(){ W=c.width=window.innerWidth; H=c.height=window.innerHeight; }
+  resize(); window.addEventListener('resize',resize);
+  for(var i=0;i<60;i++) nodes.push({x:Math.random()*1200,y:Math.random()*800,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*2+.5});
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.strokeStyle='rgba(0,201,167,0.03)'; ctx.lineWidth=1;
+    for(var x=0;x<W;x+=60){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(var y=0;y<H;y+=60){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    nodes.forEach(function(n){ n.x+=n.vx; n.y+=n.vy; if(n.x<0||n.x>W)n.vx*=-1; if(n.y<0||n.y>H)n.vy*=-1; });
+    for(var a=0;a<nodes.length;a++) for(var b=a+1;b<nodes.length;b++){
+      var dx=nodes[a].x-nodes[b].x, dy=nodes[a].y-nodes[b].y, d=Math.sqrt(dx*dx+dy*dy);
+      if(d<120){ ctx.strokeStyle='rgba(0,201,167,'+(0.12*(1-d/120))+')'; ctx.lineWidth=.5; ctx.beginPath(); ctx.moveTo(nodes[a].x,nodes[a].y); ctx.lineTo(nodes[b].x,nodes[b].y); ctx.stroke(); }
+    }
+    nodes.forEach(function(n){ ctx.fillStyle='rgba(0,201,167,0.6)'; ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,Math.PI*2); ctx.fill(); });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ── Hero canvas ───────────────────────────────────────────────────────────────
+(function(){
+  var c=document.getElementById('hero-canvas');
+  var ctx=c.getContext('2d'), W,H,nodes=[],frame=0;
+  function resize(){ W=c.width=c.offsetWidth; H=c.height=c.offsetHeight; }
+  resize(); window.addEventListener('resize',resize);
+  for(var i=0;i<80;i++) nodes.push({x:Math.random()*1200,y:Math.random()*700,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:Math.random()*2+.5});
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.strokeStyle='rgba(0,201,167,0.04)'; ctx.lineWidth=1;
+    for(var x=0;x<W;x+=60){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(var y=0;y<H;y+=60){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    nodes.forEach(function(n){ n.x+=n.vx; n.y+=n.vy; if(n.x<0||n.x>W)n.vx*=-1; if(n.y<0||n.y>H)n.vy*=-1; });
+    for(var a=0;a<nodes.length;a++) for(var b=a+1;b<nodes.length;b++){
+      var dx=nodes[a].x-nodes[b].x, dy=nodes[a].y-nodes[b].y, d=Math.sqrt(dx*dx+dy*dy);
+      if(d<130){ ctx.strokeStyle='rgba(0,201,167,'+(0.15*(1-d/130))+')'; ctx.lineWidth=.5; ctx.beginPath(); ctx.moveTo(nodes[a].x,nodes[a].y); ctx.lineTo(nodes[b].x,nodes[b].y); ctx.stroke(); }
+    }
+    nodes.forEach(function(n){ ctx.fillStyle='rgba(0,201,167,0.7)'; ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,Math.PI*2); ctx.fill(); });
+    frame++; requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// Wire up hamburger immediately (available even before login)
+document.getElementById('hamburgerBtn').addEventListener('click', openMobileNav);
 </script>
 </body>
 </html>
